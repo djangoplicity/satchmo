@@ -329,7 +329,7 @@
             {% endif %}
         </td>
         <td>
-	    <img src="{% static 'admin/img/admin/' %}icon-{% if form.existing|lookup:varkey %}yes.gif" alt="{% trans "yes" %}"{% else %}no.gif" alt="{% trans "no" %}"{% endif %} />
+	    <img src="{% static 'admin/img/' %}icon-{% if form.existing|lookup:varkey %}yes.gif" alt="{% trans "yes" %}"{% else %}no.gif" alt="{% trans "no" %}"{% endif %} />
         </td>
         <td class="checkbox">
             {{ field }}
