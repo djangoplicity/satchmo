@@ -6,7 +6,7 @@ def auth_required(request):
     """
     Sends an authentication required response
     """
-    response = HttpResponse(('Authorization Required'), mimetype="text/plain")
+    response = HttpResponse(('Authorization Required'), content_type="text/plain")
     response['WWW-Authenticate'] = 'Basic'
     response.status_code = 401
     return response

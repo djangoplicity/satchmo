@@ -104,7 +104,7 @@ def get_configurable_product_options(request, id):
             options += '<option value="%s">%s</option>' % (opt.id, str(opt))
     if not options:
         return '<option>No valid options found in "%s"</option>' % cp.product.slug
-    return http.HttpResponse(options, mimetype="text/html")
+    return http.HttpResponse(options, content_type="text/html")
 
 
 def get_product(request, product_slug=None, selected_options=(),
@@ -173,7 +173,7 @@ def get_price(request, product_slug):
     try:
         product = Product.objects.get_by_site(active=True, slug=product_slug)
     except Product.DoesNotExist:
-        return http.HttpResponseNotFound(json_encode(('', _("not available"))), mimetype="text/javascript")
+        return http.HttpResponseNotFound(json_encode(('', _("not available"))), content_type="text/javascript")
 
     prod_slug = product.slug
 
@@ -190,16 +190,16 @@ def get_price(request, product_slug):
         pvp = cp.get_product_from_options(chosen_options)
 
         if not pvp:
-            return http.HttpResponse(json_encode(('', _("not available"))), mimetype="text/javascript")
+            return http.HttpResponse(json_encode(('', _("not available"))), content_type="text/javascript")
         prod_slug = pvp.slug
         price = moneyfmt(pvp.get_qty_price(quantity))
     else:
         price = moneyfmt(product.get_qty_price(quantity))
 
     if not price:
-        return http.HttpResponse(json_encode(('', _("not available"))), mimetype="text/javascript")
+        return http.HttpResponse(json_encode(('', _("not available"))), content_type="text/javascript")
 
-    return http.HttpResponse(json_encode((prod_slug, price)), mimetype="text/javascript")
+    return http.HttpResponse(json_encode((prod_slug, price)), content_type="text/javascript")
 
 
 def get_price_detail(request, product_slug):
@@ -248,6 +248,6 @@ def get_price_detail(request, product_slug):
 
     data = json_encode(results)
     if found:
-        return http.HttpResponse(data, mimetype="text/javascript")
+        return http.HttpResponse(data, content_type="text/javascript")
     else:
-        return http.HttpResponseNotFound(data, mimetype="text/javascript")
+        return http.HttpResponseNotFound(data, content_type="text/javascript")

@@ -262,7 +262,7 @@ class ProductExportForm(forms.Form):
         else:
             mimetype = "text/" + format
 
-        response = HttpResponse(mimetype=mimetype, content=raw)
+        response = HttpResponse(content_type=mimetype, content=raw)
         response['Content-Disposition'] = 'attachment; filename="products-%s.%s"' % (time.strftime('%Y%m%d-%H%M'), format)
 
         return response
