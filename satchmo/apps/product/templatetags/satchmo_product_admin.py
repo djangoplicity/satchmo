@@ -23,6 +23,10 @@ def edit_subtypes(product):
                        '</a></li>')
             if is_config or subtype=="ProductVariation":
                  output += '<li><a href="%s">Variation Manager</a></li>' % (reverse("satchmo_admin_variation_manager", args = [product.id]))
+        elif app == 'product.modules.configurable':
+            # ignoring these subtypes to avoid errors like
+            # Reverse for 'configurable_configurableproduct_add' 
+            pass
         else:
             if not(is_config and subtype=="ProductVariation"):
                 add_url = reverse('admin:%s_%s_add' %
