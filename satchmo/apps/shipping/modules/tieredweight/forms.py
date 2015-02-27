@@ -1,16 +1,15 @@
 from django import forms
-from django.db.models.query import EmptyQuerySet 
 from shipping.modules.tieredweight.models import Carrier, Zone
 
 
 class CarrierAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CarrierAdminForm, self).__init__(*args, **kwargs)
+        tmp_qs = self.fields['default_zone'].queryset
         if 'instance' in kwargs:
-            tmp_qs = self.fields['default_zone'].queryset
             self.fields['default_zone'].queryset = tmp_qs.filter(carrier=kwargs['instance'])
         else:
-            self.fields['default_zone'].queryset = EmptyQuerySet()
+            self.fields['default_zone'].queryset = tmp_qs.none()
 
     class Meta:
         model = Carrier
