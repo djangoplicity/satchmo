@@ -309,6 +309,10 @@ class SimplePayShipForm(forms.Form):
             self.tempCart = Cart.objects.from_request(request)
             if self.tempCart.numItems > 0:
                 products = [item.product for item in self.tempCart.cartitem_set.all()]
+                weight = 0
+                for item in self.tempCart.cartitem_set.all():
+                    if item.product.weight:
+                        weight += item.product.weight * item.quantity
 
         except Cart.DoesNotExist:
             self.tempCart = None
@@ -360,6 +364,9 @@ class SimplePayShipForm(forms.Form):
                 self.shipping_description = ""
         elif len(shipping_choices) == 0:
             self.shipping_hidden = True
+            # We only support total weight of up to 30.5Kg
+            if weight >= 30499:
+                self.shipping_description = 'Overweight'
         else:
             self.fields['shipping'].choices = shipping_choices
             if config_value('SHIPPING','SELECT_CHEAPEST'):
