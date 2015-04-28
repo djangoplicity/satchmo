@@ -367,6 +367,7 @@ class SimplePayShipForm(forms.Form):
             # We only support total weight of up to 30.5Kg
             if weight >= 30499:
                 self.shipping_description = 'Overweight'
+                self.weight = weight / 1000
         else:
             self.fields['shipping'].choices = shipping_choices
             if config_value('SHIPPING','SELECT_CHEAPEST'):
