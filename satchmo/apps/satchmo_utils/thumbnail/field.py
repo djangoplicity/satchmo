@@ -51,8 +51,10 @@ class ImageWithThumbnailField(ImageField):
         self.name_field = name_field
         self.auto_rename = auto_rename
 
-    def _save_rename(self, instance, **kwargs):
+    def _save_rename(self, instance, created, raw, **kwargs):
         if hasattr(self, '_renaming') and self._renaming:
+            return
+        if raw:
             return
         if self.auto_rename is None:
             # if we get a SettingNotSet exception (even though we've already
