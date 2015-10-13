@@ -351,7 +351,7 @@ class ProductImportForm(forms.Form):
 
             from django.db import connection, transaction
 
-            transaction.commit_unless_managed()
+            transaction.commit()
             transaction.enter_transaction_management()
             transaction.managed(True)
 
