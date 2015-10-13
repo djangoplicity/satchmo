@@ -353,7 +353,6 @@ class ProductImportForm(forms.Form):
 
             transaction.commit()
             transaction.enter_transaction_management()
-            transaction.managed(True)
 
             try:
 
