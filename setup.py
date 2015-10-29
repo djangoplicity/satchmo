@@ -51,7 +51,7 @@ setup(
 		'django-registration',
 		'django-livesettings',
 		'django-threaded-multihost',
-		'django-caching-app-plugins',
+		'django-caching-app-plugins == 0.1.5',
 		'django-keyedcache',
 	],
 	packages=packages,
