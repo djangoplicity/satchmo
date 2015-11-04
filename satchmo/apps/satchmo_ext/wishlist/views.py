@@ -5,12 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.safestring import mark_safe
-try:
-    from django.utils.simplejson.encoder import JSONEncoder
-except ImportError:
-    from django.utils.simplejson import JSONEncoder
-except ImportError:
-    from simplejson.encoder import JSONEncoder
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import ugettext as _
 from satchmo_store.contact.models import Contact
 from satchmo_store.shop.signals import order_success
@@ -100,7 +95,7 @@ def wishlist_add_ajax(request, template="shop/json.html"):
     else:
         data['results'] = _('Error')
 
-    encoded = JSONEncoder().encode(data)
+    encoded = DjangoJSONEncoder().encode(data)
     encoded = mark_safe(encoded)
     log.debug('WISHLIST AJAX: %s', data)
 
@@ -142,7 +137,7 @@ def wishlist_remove_ajax(request, template="shop/json.html"):
         'success' : success,
         'wishlist_message' : msg
     }
-    encoded = JSONEncoder().encode(data)
+    encoded = DjangoJSONEncoder().encode(data)
     encoded = mark_safe(encoded)
     
     return render_to_response(template, {'json' : encoded})
