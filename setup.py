@@ -6,13 +6,14 @@
 import ez_setup
 ez_setup.use_setuptools()
 from setuptools import setup, find_packages
-import os, os.path
+import os
+import os.path
 import sys
 
 DIRNAME = os.path.dirname(__file__)
 APPDIR = os.path.join(DIRNAME, 'satchmo/apps')
 if not APPDIR in sys.path:
-    sys.path.insert(0,APPDIR)
+    sys.path.insert(0, APPDIR)
 
 # Dynamically calculate the version based on django.VERSION.
 version = __import__('satchmo_store').__version__
@@ -21,29 +22,43 @@ packages.append('static')
 packages.append('docs')
 packages.append('satchmo_skeleton')
 
-setup(name = "Satchmo",
-      version = version,
-      author = "Chris Moffitt",
-      author_email = "chris@moffitts.net",
-      url = "http://www.satchmoproject.com",
-      license = "BSD",
-      description = "The webshop for perfectionists with deadlines.",
-      long_description = "Satchmo is an ecommerce framework created using Django.",
-      include_package_data = True,
-      zip_safe = False,
-      package_dir = {
-      '' : 'satchmo/apps',
-      'static' : 'satchmo/static',
-      'docs' : 'docs',
-      'satchmo_skeleton' : 'satchmo/projects/skeleton',
-      },
-      scripts=['scripts/clonesatchmo.py'],
-      setup_requires=["setuptools_hg"],
-      packages = packages,
-      classifiers = [
-      'Development Status :: 4 - Beta',
-      'License :: OSI Approved :: BSD License',
-      'Operating System :: OS Independent', 
-      'Topic :: Office/Business',
-      ]
+setup(
+	name="Satchmo",
+	version=version,
+	author="Chris Moffitt",
+	author_email="chris@moffitts.net",
+	url="http://www.satchmoproject.com",
+	license="BSD",
+	description="The webshop for perfectionists with deadlines.",
+	long_description="Satchmo is an ecommerce framework created using Django.",
+	include_package_data=True,
+	zip_safe=False,
+	package_dir={
+		'': 'satchmo/apps',
+		'static': 'satchmo/static',
+		'docs': 'docs',
+		'satchmo_skeleton': 'satchmo/projects/skeleton',
+	},
+	scripts=['scripts/clonesatchmo.py'],
+	setup_requires=["setuptools_hg"],
+	install_requires=[
+		'pillow',
+		'pycrypto',
+		'trml2pdf',
+		'PyYAML',
+		'reportlab',
+		'sorl-thumbnail',
+		'django-registration',
+		'django-livesettings',
+		'django-threaded-multihost',
+		'django-caching-app-plugins == 0.1.5-eso',
+		'django-keyedcache',
+	],
+	packages=packages,
+	classifiers=[
+		'Development Status :: 4 - Beta',
+		'License :: OSI Approved :: BSD License',
+		'Operating System :: OS Independent',
+		'Topic :: Office/Business',
+	]
 )
