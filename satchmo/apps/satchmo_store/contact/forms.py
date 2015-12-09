@@ -45,6 +45,8 @@ class ContactInfoForm(ProxyContactForm):
     city = forms.CharField(max_length=30, label=_('City'), required=False)
     state = forms.CharField(max_length=30, label=_('State'), required=False)
     postal_code = forms.CharField(max_length=10, label=_('ZIP code/Postcode'), required=False)
+    tax_code = forms.CharField(max_length=20, label=_('Tax code'), required=False,
+        help_text=_('Tax Code for Argentina, Brazil, Peru (CUIT/CPF/RUC)'))
     copy_address = forms.BooleanField(label=_('Shipping same as billing?'), required=False)
     ship_addressee = forms.CharField(max_length=61, label=_('Addressee'), required=False)
     ship_street1 = forms.CharField(max_length=80, label=_('Street'), required=False)
@@ -52,6 +54,8 @@ class ContactInfoForm(ProxyContactForm):
     ship_city = forms.CharField(max_length=30, label=_('City'), required=False)
     ship_state = forms.CharField(max_length=30, label=_('State'), required=False)
     ship_postal_code = forms.CharField(max_length=10, label=_('ZIP code/Postcode'), required=False)
+    ship_tax_code = forms.CharField(max_length=20, label=_('Tax code'), required=False,
+        help_text=_('Tax Code for Argentina, Brazil, Peru (CUIT/CPF/RUC)'))
     next = forms.CharField(max_length=200, widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
@@ -471,6 +475,8 @@ class AddressBookForm(forms.Form):
     city = forms.CharField(max_length=30, label=_('City'), required=True)
     state = forms.CharField(max_length=30, label=_('State'), required=True)
     postal_code = forms.CharField(max_length=10, label=_('ZIP code/Postcode'), required=True)
+    tax_code = forms.CharField(max_length=20, label=_('Tax code'), required=False,
+        help_text=_('Tax Code for Argentina, Brazil, Peru (CUIT/CPF/RUC)'))
 
     def __init__(self, *args, **kwargs):
         shop = kwargs.pop('shop', None)
