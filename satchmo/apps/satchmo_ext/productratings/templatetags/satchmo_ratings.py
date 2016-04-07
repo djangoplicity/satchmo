@@ -1,6 +1,6 @@
 from django import template
 from django.template.loader import render_to_string
-from livesettings import config_value
+from livesettings.functions import config_value
 from satchmo_ext.productratings.utils import get_product_rating_string, get_product_rating
 import logging
 
@@ -27,15 +27,15 @@ def product_ratings(context):
     return { 'rendered_product_ratings': rendered }
 
 register.inclusion_tag('productratings/_render_product_ratings.html', takes_context=True)(product_ratings)
-        
-def product_rating_average_string(product): 
-    """Get the average product rating as a string, for use in templates"""   
+
+def product_rating_average_string(product):
+    """Get the average product rating as a string, for use in templates"""
     return get_product_rating_string(product)
 
 register.filter("product_rating_average_string", product_rating_average_string)
 
-def product_rating_average(product):  
-    """Get the average product rating as a number"""  
+def product_rating_average(product):
+    """Get the average product rating as a number"""
     return get_product_rating(product)
 
 register.filter("product_rating_average", product_rating_average)

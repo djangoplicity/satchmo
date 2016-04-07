@@ -9,7 +9,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from livesettings import config_value, config_choice_values, SettingNotSet
+from livesettings.functions import config_value, config_choice_values, SettingNotSet
 from satchmo_utils.iterchoices import iterchoices_db
 import payment.config
 from satchmo_store.contact.models import Contact
@@ -20,21 +20,21 @@ import logging
 import satchmo_utils.sslurllib
 
 log = logging.getLogger('payment.models')
-        
+
 class PaymentOption(models.Model):
     """
     If there are multiple options - CC, Cash, COD, etc this class allows
     configuration.
     """
     description = models.CharField(_("Description"), max_length=20)
-    active = models.BooleanField(_("Active"), 
+    active = models.BooleanField(_("Active"),
         default=False,
         help_text=_("Should this be displayed as an option for the user?"))
     optionName = models.CharField(_("Option Name"), max_length=20, choices=iterchoices_db(payment.config.labelled_gateway_choices),
-        unique=True, 
+        unique=True,
         help_text=_("The class name as defined in payment.py"))
     sortOrder = models.IntegerField(_("Sort Order"))
-    
+
     class Meta:
         verbose_name = _("Payment Option")
         verbose_name_plural = _("Payment Options")
@@ -56,7 +56,7 @@ class CreditCardDetail(models.Model):
     start_month = models.IntegerField(_("Start Month"), blank=True, null=True)
     start_year = models.IntegerField(_("Start Year"), blank=True, null=True)
     issue_num = models.CharField(blank=True, null=True, max_length=2)
-    
+
     def storeCC(self, ccnum):
         """Take as input a valid cc, encrypt it and store the last 4 digits in a visible form"""
         self.display_cc = ccnum[-4:]
@@ -68,14 +68,14 @@ class CreditCardDetail(models.Model):
             self.encrypted_cc = _encrypt_code(standin)
             key = _encrypt_code(standin + '-card')
             keyedcache.cache_set(key, skiplog=True, length=60*60, value=encrypted_cc)
-    
+
     def setCCV(self, ccv):
         """Put the CCV in the cache, don't save it for security/legal reasons."""
         if not self.encrypted_cc:
             raise ValueError('CreditCardDetail expecting a credit card number to be stored before storing CCV')
-            
+
         keyedcache.cache_set(self.encrypted_cc, skiplog=True, length=60*60, value=ccv)
-    
+
     def getCCV(self):
         try:
             ccv = keyedcache.cache_get(self.encrypted_cc)
@@ -83,9 +83,9 @@ class CreditCardDetail(models.Model):
             ccv = ""
 
         return ccv
-    
+
     ccv = property(fget=getCCV, fset=setCCV)
-    
+
     def _decryptCC(self):
         ccnum = _decrypt_code(self.encrypted_cc)
         if not config_value('PAYMENT', 'STORE_CREDIT_NUMBERS'):
@@ -96,13 +96,13 @@ class CreditCardDetail(models.Model):
             except keyedcache.NotCachedError:
                 ccnum = ""
         return ccnum
-                
-    decryptedCC = property(_decryptCC) 
+
+    decryptedCC = property(_decryptCC)
 
     def _expireDate(self):
         return(str(self.expire_month) + "/" + str(self.expire_year))
     expirationDate = property(_expireDate)
-    
+
     class Meta:
         verbose_name = _("Credit Card")
         verbose_name_plural = _("Credit Cards")

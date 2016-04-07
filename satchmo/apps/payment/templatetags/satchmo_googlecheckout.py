@@ -1,6 +1,6 @@
 from django import template
 from django.utils import translation
-from livesettings import config_get_group
+from livesettings.functions import config_get_group
 from payment.modules.google import CHECKOUT_BUTTON_SIZES
 from django.utils.http import urlencode
 
@@ -69,7 +69,7 @@ def google_checkout_image_url(parser, token):
                 imgsize = k
             else:
                 raise template.TemplateSyntaxError("%r tag got an unexpected argument.  Perhaps a bad size?  Didn't know: %s" % (args[0], arg))
-                
+
     return GoogleCheckoutImageUrlNode(merchid, imgsize, transparent, disabled)
 
 register.tag(google_checkout_image_url)

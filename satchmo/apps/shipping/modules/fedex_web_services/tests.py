@@ -6,7 +6,7 @@ from satchmo_store.shop.models import Cart, Config
 from satchmo_store.contact.models import Contact
 from shipping.modules.fedex_web_services.shipper import Shipper, convert_weight
 from shipping.modules.fedex_web_services import get_config_obj, get_methods
-from livesettings import config_get_group
+from livesettings.functions import config_get_group
 import keyedcache
 
 class FedexBaseTest(TestCase):
@@ -48,9 +48,9 @@ class FedexBaseTest(TestCase):
 
     def new_shipper(self, single_box=True):
         """
-        Creates a new Shipper instance, make sure that you set-up your livesettings for this module.
+        Creates a new Shipper instance, make sure that you set-up your livesettings.functions for this module.
         """
-        
+
         service_type = ('FEDEX_GROUND', 'Fedex Ground Shipping')
 
         settings = config_get_group('shipping.modules.fedex_web_services')

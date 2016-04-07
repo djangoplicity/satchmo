@@ -1,23 +1,23 @@
-from livesettings import *
+from livesettings.functions import *
 from django.utils.translation import ugettext_lazy as _
 
-PAYMENT_GROUP = ConfigurationGroup('PAYMENT_AUTOSUCCESS', 
-    _('Payment Auto Success Module Settings'), 
+PAYMENT_GROUP = ConfigurationGroup('PAYMENT_AUTOSUCCESS',
+    _('Payment Auto Success Module Settings'),
     ordering = 100)
 
-config_register_list(    
-    BooleanValue(PAYMENT_GROUP, 
-        'LIVE', 
+config_register_list(
+    BooleanValue(PAYMENT_GROUP,
+        'LIVE',
         description=_("Accept real payments"),
         help_text=_("False if you want to be in test mode"),
         default=False),
-        
+
     ModuleValue(PAYMENT_GROUP,
         'MODULE',
         description=_('Implementation module'),
         hidden=True,
         default = 'payment.modules.autosuccess'),
-        
+
     StringValue(PAYMENT_GROUP,
         'KEY',
         description=_("Module key"),
@@ -35,7 +35,7 @@ config_register_list(
         'URL_BASE',
         description=_('The url base used for constructing urlpatterns which will use this module'),
         default = '^auto/'),
-        
+
     BooleanValue(PAYMENT_GROUP,
         'EXTRA_LOGGING',
         description=_("Verbose logs"),

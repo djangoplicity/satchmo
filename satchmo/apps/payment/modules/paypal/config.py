@@ -1,4 +1,4 @@
-from livesettings import *
+from livesettings.functions import *
 from django.utils.translation import ugettext_lazy as _
 
 PAYMENT_GROUP = ConfigurationGroup('PAYMENT_PAYPAL',

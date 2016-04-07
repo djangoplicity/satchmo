@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.utils.translation import ugettext_lazy as _
-from livesettings import *
+from livesettings.functions import *
+from livesettings.values import *
 
 SHIP_MODULES = config_get('SHIPPING', 'MODULES')
 SHIP_MODULES.add_choice(('shipping.modules.usps', 'USPS'))
@@ -45,9 +46,9 @@ MultipleStringValue(SHIPPING_GROUP,
         (('5', 'Bound Printed Matter')),
         (('6', 'Media Mail')),
         (('7', 'Library Mail')),
-        
+
         # INTERNATIONAL CODES
-        
+
         (('14', 'Int`l: First Class Mail International Large Envelope')),
         (('15', 'Int`l: First Class Mail International Package')),
         (('1', 'Int`l: Express Mail International (EMS)')),

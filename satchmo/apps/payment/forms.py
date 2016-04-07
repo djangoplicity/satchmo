@@ -4,7 +4,7 @@ from django.template import loader
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from l10n.utils import moneyfmt
-from livesettings import config_value, config_value_safe
+from livesettings.functions import config_value, config_value_safe
 from payment import signals
 from payment.config import labelled_gateway_choices
 from payment.models import CreditCardDetail
@@ -343,7 +343,7 @@ class SimplePayShipForm(forms.Form):
                         shipping_dict = {cheapshipping: shipping_dict[cheapshipping]}
             except Discount.DoesNotExist:
                 pass
-        
+
         # possibly hide the shipping based on store config
         shiphide = config_value('SHIPPING','HIDING')
         # Handle a partial payment and make sure we don't show a shipping choice after one has
@@ -374,7 +374,7 @@ class SimplePayShipForm(forms.Form):
                 if cheapshipping is not None:
                     self.fields['shipping'].initial = cheapshipping
             self.shipping_hidden = False
-                
+
         self.shipping_dict = shipping_dict
         form_init.send(SimplePayShipForm, form=self)
 

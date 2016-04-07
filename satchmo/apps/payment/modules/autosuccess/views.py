@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext
 from django.views.decorators.cache import never_cache
-from livesettings import config_get_group
+from livesettings.functions import config_get_group
 from payment.utils import pay_ship_save, get_processor_by_key
 from satchmo_store.shop.models import Cart
 from satchmo_store.shop.models import Order, Contact, OrderPayment
@@ -33,13 +33,13 @@ def one_step(request):
     newOrder = Order(contact=contact)
     pay_ship_save(newOrder, tempCart, contact,
         shipping="", discount="", notes="")
-        
+
     request.session['orderID'] = newOrder.id
-    
+
     processor = get_processor_by_key('PAYMENT_AUTOSUCCESS')
     processor.prepare_data(newOrder)
     payment = processor.process(newOrder)
-        
+
     tempCart.empty()
     success = lookup_url(payment_module, 'satchmo_checkout-success')
     return HttpResponseRedirect(success)

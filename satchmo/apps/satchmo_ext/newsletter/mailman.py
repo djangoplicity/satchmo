@@ -7,7 +7,7 @@ in the admin settings page.
 from django.utils.translation import ugettext as _
 from Mailman import MailList, Errors
 from models import Subscription
-from livesettings import config_value
+from livesettings.functions import config_value
 import logging
 import sys
 
@@ -23,7 +23,7 @@ def update_contact(contact, subscribe, attributes={}):
     current = Subscription.email_is_subscribed(email)
     attributesChanged = False
     sub = None
-    
+
     if attributes:
         sub, created = Subscription.objects.get_or_create(email=email)
         if created:
@@ -34,9 +34,9 @@ def update_contact(contact, subscribe, attributes={}):
         sub.update_attributes(attributes)
         newAttr = [(a.name,a.value) for a in sub.attributes.all()]
         newAttr.sort()
-        
+
         if not created:
-            attributesChanged = oldAttr != newAttr    
+            attributesChanged = oldAttr != newAttr
 
     if current == subscribe:
         if subscribe:
@@ -46,7 +46,7 @@ def update_contact(contact, subscribe, attributes={}):
                 result = _("Already subscribed %(email)s.")
         else:
             result = _("Already removed %(email)s.")
-                
+
     else:
         if not sub:
             sub, created = Subscription.objects.get_or_create(email=email)
@@ -59,7 +59,7 @@ def update_contact(contact, subscribe, attributes={}):
         else:
             mailman_remove(contact)
             result = _("Unsubscribed: %(email)s")
-            
+
 
     return result % { 'email' : email }
 

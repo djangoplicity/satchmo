@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.template import loader, Context, TemplateDoesNotExist
-from livesettings import config_value
+from livesettings.functions import config_value
 from satchmo_store.shop.signals import rendering_store_mail, sending_store_mail
 
 from socket import error as SocketError
@@ -104,7 +104,7 @@ def send_store_mail(subject, context, template='', recipients_list=None,
 
     if shop_name:
         shop_email = "%s <%s>" % (shop_name, shop_email)
-    
+
     c_dict = {'shop_name': shop_name}
 
     if format_subject:

@@ -8,9 +8,9 @@ import re
 from decimal import Decimal
 from django.core.cache import cache
 from django.template import loader, Context
-from django.utils.safestring import mark_safe 
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from livesettings import config_get_group, config_value
+from livesettings.functions import config_get_group, config_value
 from shipping.modules.base import BaseShipper
 import datetime
 import logging
@@ -20,18 +20,18 @@ try:
     from xml.etree.ElementTree import fromstring, tostring
 except ImportError:
     from elementtree.ElementTree import fromstring, tostring
-    
+
 
 log = logging.getLogger('canadapost.shipper')
 
 class Shipper(BaseShipper):
-    
+
     def __init__(self, cart=None, contact=None, service_type=None):
 
         self._calculated = False
         self.cart = cart
         self.contact = contact
-        if service_type:    
+        if service_type:
             self.service_type_code = service_type[0]
             self.service_type_text = service_type[1]
         else:
@@ -39,7 +39,7 @@ class Shipper(BaseShipper):
             self.service_type_text = 'Uninitialized'
 
         self.id = u'canadapost-%s' % (self.service_type_code)
-  
+
     def __str__(self):
         '''
           This is mainly helpful for debugging purposes
@@ -53,10 +53,10 @@ class Shipper(BaseShipper):
         '''
 
         return 'Canada Post'
-    
+
     def description(self):
         '''
-          A basic description that will be displayed to the user when 
+          A basic description that will be displayed to the user when
           selecting their shipping options
         '''
 
@@ -64,7 +64,7 @@ class Shipper(BaseShipper):
 
     def cost(self):
         '''
-          Complex calculations can be done here as long as the return 
+          Complex calculations can be done here as long as the return
           value is a decimal figure
         '''
 
@@ -80,7 +80,7 @@ class Shipper(BaseShipper):
 
     def expectedDelivery(self):
         '''
-          Can be a plain string or complex calcuation 
+          Can be a plain string or complex calcuation
           returning an actual date
         '''
 
@@ -90,11 +90,11 @@ class Shipper(BaseShipper):
             return _('%s business days' % self.delivery_days)
         else:
             return _('%s business day' % self.delivery_days)
-    
+
     def valid(self, order=None):
         '''
         Can do complex validation about whether or not this
-        option is valid. For example, may check to see if the 
+        option is valid. For example, may check to see if the
         recipient is in an allowed country or location.
         '''
 
@@ -109,11 +109,11 @@ class Shipper(BaseShipper):
         all_results = f.read()
         self.raw = all_results
         return(fromstring(all_results))
-    
+
     def calculate(self, cart, contact):
         '''
-          Based on the chosen Canada Post method, we will do our call(s) 
-          to Canada Post and see how much it will cost. We will also need 
+          Based on the chosen Canada Post method, we will do our call(s)
+          to Canada Post and see how much it will cost. We will also need
           to store the results for further parsing and return via the
           methods above.
         '''
@@ -123,7 +123,7 @@ class Shipper(BaseShipper):
         settings =  config_get_group('shipping.modules.canadapost')
 
         verbose = settings.VERBOSE_LOG.value
-            
+
         self.delivery_days = _('3 - 4') #Default setting for ground delivery
         shop_details = Config.objects.get_current()
         self.packaging = ''
@@ -138,7 +138,7 @@ class Shipper(BaseShipper):
             connection = settings.CONNECTION.value
         else:
             connection = settings.CONNECTION_TEST.value
-        
+
         configuration = {
             'cpcid': settings.CPCID.value,
             'turn_around_time': settings.TURN_AROUND_TIME.value,
@@ -151,16 +151,16 @@ class Shipper(BaseShipper):
                 'cart': cart,
                 'contact': contact
             })
-        
+
         t = loader.get_template('shipping/canadapost/request.xml')
         request = t.render(c)
         self.is_valid = False
-        
+
         cache_key_response = "canadapost-cart-%s-response" % int(cart.id)
         cache_key_request = "canadapost-cart-%s-request" % int(cart.id)
         last_request = cache.get(cache_key_request)
         tree = cache.get(cache_key_response)
-        
+
         if (last_request != request) or tree is None:
             self.verbose_log("Requesting from Canada Post [%s]\n%s", cache_key_request, request)
             cache.set(cache_key_request, request, 60)
@@ -170,14 +170,14 @@ class Shipper(BaseShipper):
             cache.set(cache_key_response, tree, 60)
         else:
             needs_cache = False
-            
+
         try:
             status_code = tree.getiterator('statusCode')
             status_val = status_code[0].text
             self.verbose_log("Canada Post Status Code for cart #%s = %s", int(cart.id), status_val)
         except AttributeError:
             status_val = "-1"
-            
+
 
         if status_val == '1':
             self.is_valid = False
@@ -211,7 +211,7 @@ class Shipper(BaseShipper):
 
             if not self.is_valid:
                 self.verbose_log("Canada Post Cannot find rate for code: %s [%s]", self.service_type_code, self.service_type_text)
-              
+
     def verbose_log(self, *args, **kwargs):
         if config_value('shipping.modules.canadapost', 'VERBOSE_LOG'):
             log.debug(*args, **kwargs)

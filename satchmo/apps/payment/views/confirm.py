@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
-from livesettings import config_value
+from livesettings.functions import config_value
 from satchmo_store.shop.models import Order, OrderStatus
 from payment.config import gateway_live
 from satchmo_utils.dynamic import lookup_url, lookup_template
@@ -40,40 +40,40 @@ class ConfirmController(object):
         self.order = None
         self.cart = None
         self.extra_context = extra_context
-        self.no_stock_checkout = config_value('PRODUCT','NO_STOCK_CHECKOUT')        
+        self.no_stock_checkout = config_value('PRODUCT','NO_STOCK_CHECKOUT')
         #to override the form_handler, set this
         #otherwise it will use the built-in `_onForm`
         self.onForm = self._onForm
-        
+
         #to override the success method, set this
         #othewise it will use the built-in `_onSuccess`
         self.onSuccess = self._onSuccess
-        
+
         #false on any "can not continue" error
         self.valid = False
-        
+
         #the value to be returned from the view
         #an HttpResponse or a HttpRedirect
         self.response = None
-        
+
         self.processorMessage = ""
         self.processorReasonCode = ""
         self.processorResults = None
-        
+
         self.templates = {
             'CONFIRM' : 'shop/checkout/confirm.html',
             'EMPTY_CART': 'shop/checkout/empty_cart.html',
             '404': 'shop/404.html',
             }
-            
-                
+
+
     def confirm(self, force_post=False):
         """Handles confirming an order and processing the charges.
 
         If this is a POST, then tries to charge the order using the `payment_module`.`processor`
         On success, sets `response` to the result of the `success_handler`, returns True
         On failure, sets `response` to the result, the result of the `form_handler`, returns False
-        
+
         If not a POST, sets `response` to the result, the result of the `form_handler`, returns True
         """
         if not self.sanity_check():
@@ -89,15 +89,15 @@ class ConfirmController(object):
             if self.process():
                 self.response = self.onSuccess(self)
                 return True
-                
+
         else:
             # not a post, so still a success
             status = True
 
         self.response = self.onForm(self)
         return status
-        
-        
+
+
     def invalidate(self, dest):
         """Mark the confirmation invalid, and set the response"""
         self.valid = False
@@ -113,14 +113,14 @@ class ConfirmController(object):
         """Shortcut method to the the proper url from the `paymentModule`"""
         return lookup_url(self.paymentModule, view)
 
-        
+
     def _onForm(self, controller):
         """Show the confirmation page for the order.  Looks up the proper template for the
         payment_module.
         """
         template = controller.lookup_template('CONFIRM')
         controller.order.recalculate_total()
-        
+
         base_env = {
             'PAYMENT_LIVE' : gateway_live(controller.paymentModule),
             'default_view_tax' : controller.viewTax,
@@ -129,7 +129,7 @@ class ConfirmController(object):
             'checkout_step2': controller.lookup_url('satchmo_checkout-step2')}
         if controller.extra_context:
             base_env.update(controller.extra_context)
-            
+
         context = RequestContext(self.request, base_env)
         return render_to_response(template, context_instance=context)
 
@@ -142,21 +142,21 @@ class ConfirmController(object):
                     item.completed = True
                     item.save()
             try:
-                curr_status = controller.order.orderstatus_set.latest()  
+                curr_status = controller.order.orderstatus_set.latest()
             except OrderStatus.DoesNotExist:
                 curr_status = None
-                
+
             if (curr_status is None) or (curr_status.notes and curr_status.status == "New"):
                 controller.order.add_status(status='New', notes = "Order successfully submitted")
             else:
                 # otherwise just update and save
                 if not curr_status.notes:
                     curr_status.notes = _("Order successfully submitted")
-                curr_status.save()                
+                curr_status.save()
 
             #Redirect to the success page
             url = controller.lookup_url('satchmo_checkout-success')
-            return HttpResponseRedirect(url)    
+            return HttpResponseRedirect(url)
 
         else:
             log.debug('Order #%i not paid in full, sending to pay rest of balance', controller.order.id)
@@ -178,7 +178,7 @@ class ConfirmController(object):
         Order %i
         Results=%s
         Response=%s
-        Reason=%s""", self.paymentModule.LABEL.value, self.paymentModule.KEY.value, 
+        Reason=%s""", self.paymentModule.LABEL.value, self.paymentModule.KEY.value,
                       self.order.id, self.processorResults, self.processorReasonCode, self.processorMessage)
         return self.processorResults
 
@@ -186,7 +186,7 @@ class ConfirmController(object):
         """Ensure we have a valid cart and order."""
         try:
             self.order = Order.objects.from_request(self.request)
-            
+
         except Order.DoesNotExist:
             url = urlresolvers.reverse('satchmo_checkout-step1')
             self.invalidate(HttpResponseRedirect(url))
@@ -199,7 +199,7 @@ class ConfirmController(object):
                 self.invalidate(render_to_response(template,
                                                    context_instance=RequestContext(self.request)))
                 return False
-                
+
         except Cart.DoesNotExist:
             template = self.lookup_template('EMPTY_CART')
             self.invalidate(render_to_response(template,
@@ -208,7 +208,7 @@ class ConfirmController(object):
 
         # Check if the order is still valid
         if not self.order.validate(self.request):
-            context = RequestContext(self.request, 
+            context = RequestContext(self.request,
                 {'message': _('Your order is no longer valid.')})
             self.invalidate(render_to_response(self.templates['404'],
                                                context_instance=context))
@@ -241,7 +241,7 @@ class ConfirmController(object):
         return True
 
 def credit_confirm_info(request, payment_module, template=None):
-    """A view which shows and requires credit card selection.  
+    """A view which shows and requires credit card selection.
     This is the simplest confirmation flow, with no overrides."""
 
     controller = ConfirmController(request, payment_module)
@@ -264,7 +264,7 @@ class FreeProcessor(object):
     def has_key(*args):
         return False
 
-        
+
 class FreeProcessorModule(object):
     def __init__(self, key):
         self.KEY = FakeValue(key)
@@ -275,13 +275,13 @@ class FreeProcessorModule(object):
 
     def process(self, *args, **kwargs):
         if self.order.paid_in_full:
-            # marc order as succed to emit signals, if not present, 
+            # marc order as succed to emit signals, if not present,
             # orders with balance 0 not correctly notified
             self.order.order_success()
             return ProcessorResult('FREE', True, _('Success'))
         else:
             return ProcessorResult('FREE', False, _('This order does not have a zero balance'))
-    
+
 
 def confirm_free_order(request, key="FREE", template=None):
     controller = ConfirmController(request, None)

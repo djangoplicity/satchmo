@@ -4,7 +4,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils import timezone
 from l10n.models import Country
-from livesettings import config_value
+from livesettings.functions import config_value
 from satchmo_store.contact.models import Contact, AddressBook, PhoneNumber, Organization, ContactRole
 from satchmo_store.shop.models import Config
 from satchmo_store.shop.utils import clean_field
@@ -397,7 +397,7 @@ class ContactInfoForm(ProxyContactForm):
                 ship_address.addressee = bill_address.addressee
             except AttributeError:
                 pass
-                
+
         # Make sure not to overwrite a custom ship to name
         if copy_address and getattr(ship_address, "addressee", "") == getattr(bill_address, "addressee", ""):
             # make sure we don't have any other default shipping address
@@ -481,7 +481,7 @@ class AddressBookForm(forms.Form):
         shipping_areas = area_choices_for_country(self._default_country)
         self.fields['country'] = forms.ModelChoiceField(shop.countries(), required=False, label=_('Country'), empty_label=None, initial=shop.sales_country.pk)
         self.fields['state'] = forms.ChoiceField(choices=shipping_areas, required=False, label=_('State'))
-        
+
     def save(self, contact, address_entry=None, **kwargs):
         data = self.cleaned_data.copy()
         if not address_entry:
@@ -500,6 +500,6 @@ class AddressBookForm(forms.Form):
 
 YES_NO_CHOICES = (('Yes',_('Yes')),
                    ('No',_('No')))
-                   
+
 class YesNoForm(forms.Form):
     delete_entry = forms.MultipleChoiceField(label=_('Delete entry?'), required=True, widget=forms.widgets.RadioSelect, choices=YES_NO_CHOICES, initial="No")

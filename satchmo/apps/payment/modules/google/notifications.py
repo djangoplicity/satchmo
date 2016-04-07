@@ -4,7 +4,7 @@ Created on 3 Mar 2009
 @author: dalore
 '''
 from django.utils.translation import ugettext as _
-from livesettings import config_get_group, config_value
+from livesettings.functions import config_get_group, config_value
 from payment.utils import get_processor_by_key
 from satchmo_store.shop.models import Cart, Order, OrderPayment
 import re
@@ -21,7 +21,7 @@ def find_order(data):
 def notify_neworder(request, data):
     """
     Called when google reports a new order.
-    
+
     Looks up the order from the private data and sets the status.
     Empties the cart.
     """
@@ -31,23 +31,23 @@ def notify_neworder(request, data):
     order = Order.objects.get(pk=order_id)
     payment_module = config_get_group('PAYMENT_GOOGLE')
     processor = get_processor_by_key('PAYMENT_GOOGLE')
-    
+
     # record pending payment
     amount = data['order-total']
     pending_payment = processor.create_pending_payment(order)
     # save transaction id so we can find this order later
     pending_payment.capture.transaction_id = data['google-order-number']
     pending_payment.capture.save()
-    
+
     # delete cart
     for cart in Cart.objects.filter(customer=order.contact):
         cart.empty()
         cart.delete()
-        
+
     # set status
     order.add_status(status='New', notes=_("Received through Google Checkout."))
-    
-        
+
+
 def do_charged(request, data):
     """
     Called when google sends a charged status update
@@ -55,7 +55,7 @@ def do_charged(request, data):
     """
     # find order from google id
     order = find_order(data)
-    
+
     # Added to track total sold for each product
     for item in order.orderitem_set.all():
         product = item.product
@@ -63,12 +63,12 @@ def do_charged(request, data):
         if config_value('PRODUCT','TRACK_INVENTORY'):
             product.items_in_stock -= item.quantity
         product.save()
-        
+
     # process payment
     processor = get_processor_by_key('PAYMENT_GOOGLE')
     # setting status to billed (why does paypal set it to new?)
     order.add_status(status='Billed', notes=_("Paid through Google Checkout."))
-    
+
 def do_shipped(request, data):
     """
     Called when you use the google checkout console to mark order has been shipped
@@ -79,7 +79,7 @@ def do_shipped(request, data):
     processor = get_processor_by_key('PAYMENT_GOOGLE')
     # setting status to billed (why does paypal set it to new?)
     order.add_status(status='Shipped', notes=_("Shipped through Google Checkout."))
-    
+
 
 def notify_statechanged(request, data):
     """
@@ -93,8 +93,8 @@ def notify_statechanged(request, data):
             do_charged(request, data)
         elif fulfillment_state == 'DELIVERED':
             do_shipped(request, data)
-    
-        
+
+
 def notify_chargeamount(request, data):
     """
     This gets called when google sends a charge amount

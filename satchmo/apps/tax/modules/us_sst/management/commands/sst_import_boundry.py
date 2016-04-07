@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 import os
 from datetime import date
 
-# We don't actually need it, but otherwise livesettings chokes.
+# We don't actually need it, but otherwise livesettings.functions chokes.
 import tax.config
 
 from tax.modules.us_sst.models import TaxRate, TaxBoundry

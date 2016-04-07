@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from livesettings import *
+from livesettings.functions import *
 from product.config import PRODUCT_GROUP
 
 ENABLE_AKISMET = config_register(
@@ -8,7 +8,7 @@ ENABLE_AKISMET = config_register(
         'AKISMET_ENABLE',
         description= _("Enable Akismet ratings"),
         default=False))
-        
+
 AKISMET = config_register(
     StringValue(PRODUCT_GROUP,
         'AKISMET_KEY',

@@ -2,7 +2,7 @@
 from django.contrib.comments.models import Comment
 from django.contrib.sites.models import Site
 from keyedcache import cache_get, cache_set, NotCachedError
-from livesettings import config_value
+from livesettings.functions import config_value
 from product.models import Product
 from satchmo_ext.productratings.utils import average
 import logging
@@ -21,7 +21,7 @@ def highest_rated(count=0, site=None):
         pks = cache_get("BESTRATED", site=site_id, count=count)
         pks = [pk for pk in pks.split(',')]
         log.debug('retrieved highest rated products from cache')
-        
+
     except NotCachedError, nce:
         # here were are going to do just one lookup for all product comments
 
@@ -30,7 +30,7 @@ def highest_rated(count=0, site=None):
             site__id__exact=site_id,
             productrating__rating__gt=0,
             is_public__exact=True).order_by('object_pk')
-        
+
         # then make lists of ratings for each
         commentdict = {}
         for comment in comments:
@@ -38,12 +38,12 @@ def highest_rated(count=0, site=None):
                 rating = comment.productrating.rating
                 if rating>0:
                     commentdict.setdefault(comment.object_pk, []).append(rating)
-        
+
         # now take the average of each, and make a nice list suitable for sorting
         ratelist = [(average(ratings), int(pk)) for pk, ratings in commentdict.items()]
         ratelist.sort()
         #log.debug(ratelist)
-        
+
         # chop off the highest and reverse so highest is the first
         ratelist = ratelist[-count:]
         ratelist.reverse()
@@ -52,7 +52,7 @@ def highest_rated(count=0, site=None):
         pkstring = ",".join(pks)
         log.debug('calculated highest rated products, set to cache: %s', pkstring)
         cache_set(nce.key, value=pkstring)
-    
+
     if pks:
         pks = [pk for pk in pks if isinstance(pk, (int, long))]
         productdict = Product.objects.in_bulk(pks)
@@ -70,5 +70,5 @@ def highest_rated(count=0, site=None):
                 pass
     else:
         products = []
-        
+
     return products

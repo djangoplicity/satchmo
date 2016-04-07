@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.http import HttpResponse
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils import timezone
-from livesettings import config_get_group, config_value
+from livesettings.functions import config_get_group, config_value
 from satchmo_store.shop.models import Order, OrderItem, OrderPayment
 from satchmo_utils.views import bad_or_missing
 import logging
@@ -52,13 +52,13 @@ def cron_rebill(request=None):
                     if not payments.payment in ipn_based and item.order.balance > 0:
                         #run card
                         #Do the credit card processing here & if successful, execute the success_handler
-                        from livesettings import config_get_group
+                        from livesettings.functions import config_get_group
                         payment_module = config_get_group('PAYMENT_%s' % payments.payment)
                         credit_processor = payment_module.MODULE.load_module('processor')
                         processor = credit_processor.PaymentProcessor(payment_module)
                         processor.prepare_data(item.order)
                         result = processor.process()
-        
+
                         if result.payment:
                             reason_code = result.payment.reason_code
                         else:
