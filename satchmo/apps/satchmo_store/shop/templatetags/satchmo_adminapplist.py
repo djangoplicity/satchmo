@@ -1,5 +1,5 @@
 from django import template
-from django.db import models
+from django.apps import apps
 register = template.Library()
 
 try:
@@ -28,9 +28,9 @@ except AttributeError:
         ['foo', 'bar', 'baz']
         """
         assert maxsplit >= 0
-           
+
         if maxsplit == 0: return [s]
-           
+
         # the following lines perform the function, but inefficiently.
         #  This may be adequate for compatibility purposes
         items = s.split(delim)
@@ -45,9 +45,11 @@ class FilterAdminApplistNode(template.Node):
 
     def render(self, context):
         all_apps = {}
-        for app in models.get_apps():
-            name = len(rsplit(app.__name__, '.', 0))>1 and rsplit(app.__name__, '.', 0)[-2] or app.__name__
-            all_apps[name] = app.__name__
+        for app in apps.get_app_configs():
+            if not app.models_module:
+                continue
+            name = len(rsplit(app.models_module.__name__, '.', 0))>1 and rsplit(app.models_module.__name__, '.', 0)[-2] or app.models_module.__name__
+            all_apps[name] = app.models_module.__name__
 
         filtered_app_list = []
         for entry in context[self.listname]:

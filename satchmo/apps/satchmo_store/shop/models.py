@@ -373,12 +373,11 @@ class Cart(models.Model):
             added_quantity=number_added,
             details=details)
 
-        if not alreadyInCart:
-            self.cartitem_set.add(item_to_modify)
-
         item_to_modify.quantity += number_added
         item_to_modify.save()
+
         if not alreadyInCart:
+            self.cartitem_set.add(item_to_modify)
             for data in details:
                 item_to_modify.add_detail(data)
 
