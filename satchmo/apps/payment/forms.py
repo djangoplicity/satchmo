@@ -263,6 +263,13 @@ class PaymentContactInfoForm(PaymentMethodForm, ContactInfoForm):
                         self._check_state(self.cleaned_data['state'], self.cleaned_data['country'])
                     except forms.ValidationError, e:
                         self._errors[fld] = e.messages
+
+            # Check that we have a tax code for Brazil, Peru and Argentina
+            ship_country = self.cleaned_data.get('ship_country')
+            ship_tax_code = self.cleaned_data.get('ship_tax_code')
+            if ship_country.iso2_code in ('AR', 'BR', 'PE', 'PY') and not ship_tax_code.strip():
+                raise forms.ValidationError(_('The Tax code is required for shipping to %s') % ship_country)
+
             super(PaymentContactInfoForm, self).clean()
             return self.cleaned_data
 

@@ -53,6 +53,7 @@ class DiscountOptions(admin.ModelAdmin):
     list_display=('site', 'description','active')
     list_display_links = ('description',)
     raw_id_fields = ('valid_products',)
+    search_fields = ['description', 'code']
     form = DiscountForm
 
 class OptionGroupTranslation_Inline(admin.StackedInline):
