@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
-from livesettings import *
+from livesettings.functions import *
+from livesettings.values import *
 
 SHIP_MODULES = config_get('SHIPPING', 'MODULES')
 

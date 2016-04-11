@@ -5,7 +5,7 @@ This is based on several people's work.
   - https://github.com/gtaylor/python-fedex
   - Some inspiration drawn from fedex shipping module by Chris Laux
   - Some was drawn from the python-fedex examples
-  
+
 This requires 2 additional modules to work:
 Python Fedex and the Python SOAP module suds.
 http://code.google.com/p/python-fedex/
@@ -19,7 +19,7 @@ All values based on July 2011 Fedex Developer Guide
 """
 
 from django.utils.translation import ugettext_lazy as _
-from livesettings import *
+from livesettings.functions import *
 SHIP_MODULES = config_get('SHIPPING', 'MODULES')
 SHIP_MODULES.add_choice(('shipping.modules.fedex_web_services', 'FEDEX (fedex_web_services)'))
 
@@ -37,25 +37,25 @@ config_register_list(
         description=_('FedEx Meter Number'),
         help_text=_('Meter Number provided by FedEx.'),
         default=u''),
-    
+
     StringValue(SHIPPING_GROUP,
         'ACCOUNT',
         description=_('FedEx Account Number'),
         help_text=_('FedEx Account Number.'),
         default=u''),
-    
+
     StringValue(SHIPPING_GROUP,
         'AUTHENTICATION_KEY',
         description=_('FedEx Authentication Key'),
         help_text=_('FedEx Authentication Key.'),
         default=u''),
-    
+
     StringValue(SHIPPING_GROUP,
         'AUTHENTICATION_PASSWORD',
         description=_('FedEx Authentication Password'),
         help_text=_('FedEx Authentication Password.'),
         default=u''),
-    
+
     StringValue(SHIPPING_GROUP,
         'SHIPPER_REGION',
         description=_('The region you are sending your package from.'),
@@ -69,7 +69,7 @@ config_register_list(
         ),
         default = 'US',
     ),
-    
+
     MultipleStringValue(SHIPPING_GROUP,
         'SHIPPING_CHOICES',
         description=_('FedEx Shipping Choices Available to customers.'),
@@ -112,7 +112,7 @@ config_register_list(
         ),
         default = 'YOUR_PACKAGING',
     ),
-    
+
     StringValue(SHIPPING_GROUP,
         'DEFAULT_ITEM_WEIGHT',
         description = _("Default/Minimum Item Weight"),
@@ -128,7 +128,7 @@ config_register_list(
                    ),
         default = "LB"
     ),
-    
+
     BooleanValue(SHIPPING_GROUP,
         'SINGLE_BOX',
         description=_("Single Box?"),
@@ -148,13 +148,13 @@ config_register_list(
         help_text = _("Most users will keep the default Regular Pickup."),
         default = 'REGULAR_PICKUP',
     ),
-    
+
     BooleanValue(SHIPPING_GROUP,
         'VERBOSE_LOG',
         description=_("Verbose logs"),
         help_text=_("Send the entire request and response to the log - for debugging help when setting up FedEx."),
         default=False),
-    
+
     BooleanValue(SHIPPING_GROUP,
         'TEST_SERVER',
         description=_("Use test server?"),

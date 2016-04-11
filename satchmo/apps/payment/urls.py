@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
-from django.db import models
-from livesettings import config_value
+from django.apps import apps
+from livesettings.functions import config_value
 from satchmo_store.shop.satchmo_settings import get_satchmo_setting
 import logging
 
@@ -23,13 +23,12 @@ urlpatterns = patterns('payment.views',
 
 def make_urlpatterns():
     patterns = []
-    for app in models.get_apps():
-        if hasattr(app, 'PAYMENT_PROCESSOR'):
-            parts = app.__name__.split('.')
-            key = parts[-2].upper()
+    for app in apps.get_app_configs():
+        if hasattr(app.models_module, 'PAYMENT_PROCESSOR'):
+            parts = app.name.split('.')
+            key = parts[-1].upper()
             modulename = 'PAYMENT_%s' % key
-            name = app.__name__
-            name = name[:name.rfind('.')]
+            name = app.name
             #log.debug('payment module=%s, key=%s', modulename, key)
             # BJK: commenting out Bursar settings here
             # try:
@@ -38,7 +37,7 @@ def make_urlpatterns():
             # except SettingNotSet:
             #     interface = name[:name.rfind('.')]
             # urlmodule = "%s.urls" % interface
-            urlmodule = '.'.join(parts[:-1]) + '.urls'
+            urlmodule = '.'.join(parts) + '.urls'
             urlbase = config_value(modulename, 'URL_BASE')
             log.debug('Found payment processor: %s, adding urls at %s', key, urlbase)
             patterns.append(url(urlbase, [urlmodule, '', '']))

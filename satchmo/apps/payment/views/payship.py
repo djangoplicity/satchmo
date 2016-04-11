@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from livesettings import config_value
+from livesettings.functions import config_value
 from satchmo_store.contact.models import Contact
 from payment.config import gateway_live
 from payment.forms import CreditPayShipForm, SimplePayShipForm
@@ -51,7 +51,7 @@ def credit_pay_ship_process_form(request, contact, working_cart, payment_module,
         (True, destination) on success
         (False, form) on failure
     """
-    
+
     def _get_form(request, payment_module, *args, **kwargs):
         processor = payment_module.MODULE.load_module('processor')
         log.debug('processor=%s', processor)
@@ -61,13 +61,13 @@ def credit_pay_ship_process_form(request, contact, working_cart, payment_module,
         else:
             log.debug('using default form')
             formclass = CreditPayShipForm
-        
+
         form = formclass(request, payment_module, *args, **kwargs)
         return form
 
     if request.method == "POST":
         new_data = request.POST.copy()
-        
+
         form = _get_form(request, payment_module, new_data, *args, **kwargs)
         if form.is_valid():
             data = form.cleaned_data
@@ -99,21 +99,21 @@ def credit_pay_ship_process_form(request, contact, working_cart, payment_module,
                 val = cc.credit_type
                 if val:
                     order_data['credit_type'] = val
-            
+
             kwargs['initial'] = order_data
             ordershippable = order.is_shippable
         except Order.DoesNotExist:
             pass
-        
+
         form = _get_form(request, payment_module, *args, **kwargs)
         if not form.is_needed():
             log.debug('Skipping pay ship because form is not needed, nothing to pay')
-            form.save(request, working_cart, contact, None, 
+            form.save(request, working_cart, contact, None,
                 data={'shipping' : form.shipping_dict.keys()[0]})
 
             url = lookup_url(payment_module, 'satchmo_checkout-step3')
             return (True, http.HttpResponseRedirect(url))
-        
+
     return (False, form)
 
 def simple_pay_ship_process_form(request, contact, working_cart, payment_module, allow_skip=True):
@@ -141,27 +141,27 @@ def simple_pay_ship_process_form(request, contact, working_cart, payment_module,
         if allow_skip:
             skipping = False
             skipstep = form.shipping_hidden or not ordershippable or (len(form.shipping_dict) == 1)
-            if skipstep:               
+            if skipstep:
                 log.debug('Skipping pay ship, nothing to select for shipping')
                 # no shipping choice = skip this step
-                form.save(request, working_cart, contact, payment_module, 
+                form.save(request, working_cart, contact, payment_module,
                     data={'shipping' : form.fields['shipping'].initial})
                 skipping = True
             elif not form.is_needed():
                 log.debug('Skipping pay ship because form is not needed, nothing to pay')
-                form.save(request, working_cart, contact, None, 
+                form.save(request, working_cart, contact, None,
                     data={'shipping' : form.shipping_dict.keys()[0]})
                 skipping = True
-            
+
             if skipping:
                 url = lookup_url(payment_module, 'satchmo_checkout-step3')
                 return (True, http.HttpResponseRedirect(url))
-                
+
         return (False, form)
 
 def pay_ship_render_form(request, form, template, payment_module, cart):
     template = lookup_template(payment_module, template)
-            
+
     ctx = RequestContext(request, {
         'form': form,
         'PAYMENT_LIVE': gateway_live(payment_module),

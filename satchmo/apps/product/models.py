@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.utils.encoding import smart_str
 from django.utils.translation import get_language, ugettext, ugettext_lazy as _
 from l10n.utils import moneyfmt, lookup_translation
-from livesettings import config_value, SettingNotSet, config_value_safe
+from livesettings.functions import config_value, SettingNotSet, config_value_safe
 from prices import get_product_quantity_price, get_product_quantity_adjustments
 from product import active_product_types
 from product.prices import PriceAdjustmentCalc
@@ -22,7 +22,7 @@ from satchmo_utils import get_flat_list
 from satchmo_utils.fields import CurrencyField
 from satchmo_utils.thumbnail.field import ImageWithThumbnailField
 from satchmo_utils.unique_id import slugify
-import config   #This import is required to make sure livesettings picks up the config values
+import config   #This import is required to make sure livesettings.functions picks up the config values
 import datetime
 import keyedcache
 import logging
@@ -164,13 +164,13 @@ class Category(models.Model):
         else:
             cats = self.get_all_children(include_self=True)
             qry = Product.objects.filter(category__in=cats)
-        
+
         if variations:
             slugs = qry.filter(site=self.site, active=True, **kwargs).values_list('slug',flat=True)
             return Product.objects.filter(Q(productvariation__parent__product__slug__in = slugs)|Q(slug__in = slugs)).prefetch_related('productimage_set')
         else:
             return qry.filter(site=self.site, active=True, productvariation__parent__isnull=True, **kwargs).prefetch_related('productimage_set')
- 
+
 
     def translated_attributes(self, language_code=None):
         if not language_code:

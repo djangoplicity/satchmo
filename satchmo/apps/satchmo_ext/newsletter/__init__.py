@@ -2,7 +2,7 @@
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from livesettings import config_value
+from livesettings.functions import config_value
 from satchmo_store.accounts.signals import satchmo_registration
 from satchmo_store.contact.signals import satchmo_contact_view
 from satchmo_utils import load_module
@@ -17,7 +17,7 @@ def get_newsletter_module():
         modulename = config_value('NEWSLETTER', 'MODULE')
     except AttributeError:
         modulename = 'satchmo_ext.newsletter.ignore'
-        
+
     return load_module(modulename)
 
 def is_subscribed(contact):
@@ -29,7 +29,7 @@ def update_subscription(contact, subscribed, attributes={}):
     current = is_subscribed(contact)
     log.debug("Updating subscription status from %s to %s for %s", current, subscribed, contact)
     result = get_newsletter_module().update_contact(contact, subscribed, attributes=attributes)
-    signals.newsletter_subscription_updated.send(contact, 
+    signals.newsletter_subscription_updated.send(contact,
         old_state=current, new_state=subscribed, contact=contact, attributes=attributes)
     return result
 

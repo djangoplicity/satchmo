@@ -1,5 +1,5 @@
 import random
-from livesettings import config_value
+from livesettings.functions import config_value
 
 def generate_certificate_code():
     """Creates a code, formatted according to the shop owner's preference as set in the config system."""
@@ -9,12 +9,12 @@ def generate_certificate_code():
 
 def generate_code(charset, format):
     """Creates the actual code.  Split out for ease of testing."""
-    
+
     out = []
     for c in format.strip():
         if c=="^":
             out.extend(random.sample(charset, 1))
         else:
             out.append(c)
-    
+
     return "".join(out)

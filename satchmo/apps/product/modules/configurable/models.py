@@ -7,7 +7,7 @@ from product.models import Option, Product, ProductPriceLookup, OptionGroup, Pri
 from product.prices import get_product_quantity_price, get_product_quantity_adjustments
 from satchmo_utils import cross_list
 from satchmo_utils.unique_id import slugify
-import config # livesettings options
+import config # livesettings.functions options
 import datetime
 import logging
 
@@ -287,7 +287,7 @@ class ProductVariation(models.Model):
         if qty:
             prices = prices.filter(quantity__lte=qty)
         return prices
-        
+
     def _get_fullPrice(self):
         """ Get price based on parent ConfigurableProduct """
         # allow explicit setting of prices.
@@ -428,7 +428,7 @@ class ProductVariation(models.Model):
 
         pvs = ProductVariation.objects.filter(parent=self.parent)
         pvs = pvs.exclude(product=self.product)
-        
+
         for pv in pvs:
             if pv.unique_option_ids == self.unique_option_ids:
                 return
@@ -436,7 +436,7 @@ class ProductVariation(models.Model):
         # see ticket #1312 for details.
         # Unfortunately it is not working, see ticket #1318
         #for option in self.options.all():
-        #    pvs = pvs.filter(options__option_group__id=option.option_group_id, 
+        #    pvs = pvs.filter(options__option_group__id=option.option_group_id,
         #        options__value=option.value)
         #if pvs.count():
         #    return # Don't allow duplicates

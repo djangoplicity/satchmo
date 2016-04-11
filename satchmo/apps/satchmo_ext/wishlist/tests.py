@@ -6,7 +6,7 @@ from django.test.client import Client
 from django.utils.encoding import smart_str
 from keyedcache import cache_delete
 from l10n.models import Country
-from livesettings import config_value, config_get
+from livesettings.functions import config_value, config_get
 from product.models import Product
 from product.utils import rebuild_pricing
 from satchmo_ext.wishlist.models import *
@@ -61,17 +61,17 @@ class WishTest(TestCase):
         product = Product.objects.get(slug='dj-rocks')
         response = self.client.get(product.get_absolute_url())
         self.assertContains(response, "Django Rocks shirt", count=2, status_code=200)
-        response = self.client.post(url('satchmo_smart_add'), { 
+        response = self.client.post(url('satchmo_smart_add'), {
             "productname" : "dj-rocks",
             "1" : "M",
             "2" : "BL",
             "addwish" : "Add to wishlist"
         })
         self.assertContains(response, "Sorry, you must be", count=1, status_code=200)
-    
+
 class WishTestLoggedIn(TestCase):
     fixtures = ['l10n-data.yaml', 'sample-store-data.yaml', 'products.yaml', 'test-config.yaml']
-    
+
     def setUp(self):
         self.client = Client()
         user = User.objects.create_user('wisher', 'wisher@example.com', 'passwd')
@@ -82,10 +82,10 @@ class WishTestLoggedIn(TestCase):
             last_name="Tester")
         self.client.login(username='wisher', password='passwd')
         rebuild_pricing()
-        
+
     def tearDown(self):
         cache_delete()
-        
+
     def test_wish_adding(self):
         """
         Validate we can add some items to the wishlist
@@ -93,7 +93,7 @@ class WishTestLoggedIn(TestCase):
         product = Product.objects.get(slug='dj-rocks')
         response = self.client.get(product.get_absolute_url())
         self.assertContains(response, "Django Rocks shirt", count=2, status_code=200)
-        response = self.client.post(url('satchmo_smart_add'), { 
+        response = self.client.post(url('satchmo_smart_add'), {
             "productname" : "dj-rocks",
             "1" : "M",
             "2" : "BL",
@@ -102,7 +102,7 @@ class WishTestLoggedIn(TestCase):
         wishurl = url('satchmo_wishlist_view')
         self.assertRedirects(response, domain + wishurl, status_code=302, target_status_code=200)
         response = self.client.get(wishurl)
-        
+
         self.assertContains(response, "Django Rocks shirt (Medium/Blue)", count=1, status_code=200)
 
     def test_wish_removing(self):
@@ -112,16 +112,16 @@ class WishTestLoggedIn(TestCase):
         product = Product.objects.get(slug="dj-rocks-m-bl")
         wish = ProductWish(product = product, contact=self.contact)
         wish.save()
-        
+
         product = Product.objects.get(slug="robot-attack-soft")
         wish = ProductWish(product = product, contact=self.contact)
         wish.save()
-        
+
         wishurl = url('satchmo_wishlist_view')
         response = self.client.get(wishurl)
         self.assertContains(response, "Robots Attack", count=1, status_code=200)
         self.assertContains(response, "Django Rocks shirt (Medium/Blue)", count=1, status_code=200)
-        
+
         wishurl = url('satchmo_wishlist_remove')
         response = self.client.post(wishurl, {
             'id' : wish.id
@@ -136,16 +136,16 @@ class WishTestLoggedIn(TestCase):
         product = Product.objects.get(slug="dj-rocks-m-bl")
         wish = ProductWish(product = product, contact=self.contact)
         wish.save()
-        
+
         product = Product.objects.get(slug="robot-attack-soft")
         wish = ProductWish(product = product, contact=self.contact)
         wish.save()
-        
+
         wishurl = url('satchmo_wishlist_view')
         response = self.client.get(wishurl)
         self.assertContains(response, "Robots Attack", count=1, status_code=200)
         self.assertContains(response, "Django Rocks shirt (Medium/Blue)", count=1, status_code=200)
-        
+
         moveurl = url('satchmo_wishlist_move_to_cart')
         response = self.client.post(moveurl, {
             'id' : wish.id
@@ -155,5 +155,5 @@ class WishTestLoggedIn(TestCase):
 
         response = self.client.get(carturl)
         self.assertContains(response, "Robots Attack", count=1, status_code=200)
-        
-        
+
+

@@ -18,13 +18,13 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
-from livesettings import config_get_group, config_value
+from livesettings.functions import config_get_group, config_value
 from payment.utils import get_processor_by_key
 from payment.views import payship
 from satchmo_store.shop.models import Order, Cart
 from satchmo_store.shop.satchmo_settings import get_satchmo_setting
 from satchmo_utils.dynamic import lookup_url, lookup_template
-from django.views.decorators.csrf import csrf_exempt  
+from django.views.decorators.csrf import csrf_exempt
 from satchmo_utils.views import bad_or_missing
 
 import logging
@@ -216,7 +216,7 @@ def notify_callback(request):
     for cart in Cart.objects.filter(customer=order.contact):
         cart.empty()
     return HttpResponse()
-    
+
 
 def success(request):
     """
