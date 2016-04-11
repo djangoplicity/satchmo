@@ -294,6 +294,8 @@ class AddressBook(models.Model):
     state = models.CharField(_("State"), max_length=50, blank=True)
     city = models.CharField(_("City"), max_length=50)
     postal_code = models.CharField(_("Zip Code"), max_length=30)
+    tax_code = models.CharField(_("Tax Code"), max_length=20, blank=True,
+        help_text=_('Tax Code for Argentina, Brazil, Peru (CUIT/CPF/RUC)'))
     country = models.ForeignKey(Country, verbose_name=_("Country"))
     is_default_shipping = models.BooleanField(_("Default Shipping Address"),
         default=False)

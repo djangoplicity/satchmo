@@ -658,6 +658,8 @@ class Order(models.Model):
     ship_city = models.CharField(_("City"), max_length=50, blank=True)
     ship_state = models.CharField(_("State"), max_length=50, blank=True)
     ship_postal_code = models.CharField(_("Zip Code"), max_length=30, blank=True)
+    ship_tax_code = models.CharField(_("Tax Code"), max_length=20, blank=True,
+        help_text=_('Tax Code for Argentina, Brazil, Peru (CUIT/CPF/RUC)'))
     ship_country = models.CharField(_("Country"), max_length=2, blank=True)
     bill_addressee = models.CharField(_("Addressee"), max_length=61, blank=True)
     bill_street1 = models.CharField(_("Street"), max_length=80, blank=True)
@@ -760,6 +762,7 @@ class Order(models.Model):
         self.ship_city = shipaddress.city
         self.ship_state = shipaddress.state
         self.ship_postal_code = shipaddress.postal_code
+        self.ship_tax_code = shipaddress.tax_code
         self.ship_country = shipaddress.country.iso2_code
         self.bill_addressee = billaddress.addressee
         self.bill_street1 = billaddress.street1
