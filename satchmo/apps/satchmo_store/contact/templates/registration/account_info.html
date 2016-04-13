@@ -1,4 +1,4 @@
-{% extends "shop/base.html" %}{% load url from future %}
+{% extends "shop/base.html" %}
 {% load i18n %}
 
 {% block navbar %}
@@ -8,7 +8,7 @@
 {% block content %}
 <h4>{% trans "Your Account info" %}</h4>
 {% with user_data.full_name as full_name %}
-<p>{% blocktrans %}Welcome, {{ full_name }}.{% endblocktrans %}</p> 
+<p>{% blocktrans %}Welcome, {{ full_name }}.{% endblocktrans %}</p>
 {% endwith %}
 {% trans "Account options" %}:
 <ul>

@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %}{% load url from future %}
+{% extends "admin/base_site.html" %}
 {% load i18n admin_static satchmo_util %}
 
 {% block breadcrumbs %}{% if not is_popup %}
@@ -20,11 +20,11 @@
     {% include "shop/_jquery_form.html" %}
     <script type="text/javascript">
     var satchmo = satchmo || {};
-    
+
     satchmo.deselect_all = function() {
         satchmo.toggle('#variation_products input', false);
     };
-    
+
     satchmo.hide_inactive = function() {
         $('#variation_products .checkbox input').each(function() {
             if (!$(this)[0].checked) {
@@ -37,16 +37,16 @@
         $(cls).each(function() { this.checked = state });
         return false;
     };
-    
+
     satchmo.optionkeys = {{ form.optionkeys|as_json }};
-    
+
     satchmo.cross_list = function(list) {
         var fn = function(head, list, work) {
             var first = list[0];
             for (var i=0; i<first.length; i++) {
                 var elt = first[i];
                 var h = (head == "") ? elt : head + "__" + elt;
-                
+
                 if (list.length > 1) {
                     fn(h, list.slice(1), work);
                 }
@@ -56,7 +56,7 @@
             }
             return work
         }
-        
+
         work = fn("#id_pv", list, []);
         return work;
     };
@@ -65,25 +65,25 @@
         satchmo.toggle('#variation_options input', true);
         satchmo.toggle('#variation_products .checkbox input', true);
     }
-        
+
     satchmo.select_these = function(only, state) {
-        
+
         keys = satchmo.selected_by_group();
         if (keys.length > 0) {
             if (only) {
                 satchmo.deselect_all();
             }
-            
+
             for (var i=0; i<keys.length; i++) {
                 var key = keys[i];
                 satchmo.toggle(key, state);
             }
         }
     };
-    
+
     satchmo.selected_by_group = function() {
         var opts = [];
-    
+
         for (var i=0; i<satchmo.optionkeys.length; i++) {
             var key = satchmo.optionkeys[i];
             var group = satchmo.optiongroups[key];
@@ -98,12 +98,12 @@
                 opts.push(group_choices);
             }
         }
-        
+
         if (opts.length != satchmo.optionkeys.length) {
             alert('You have to pick one from each optiongroup before this will work');
             return [];
         }
-        
+
         return satchmo.cross_list(opts);
     };
 
@@ -128,7 +128,7 @@
 							var changed = (oldval != newval);
 						}
 						if (changed) {
-							try { log.debug('Dirty ' + key); } catch(err) {};		            
+							try { log.debug('Dirty ' + key); } catch(err) {};
 							dirty[key] = true;
 							dirty_ids.push(key);
 						}
@@ -136,7 +136,7 @@
 				}
 			}
 		);
-		
+
 		if (dirty_ids.length == 0) {
 			alert('nothing has been changed');
 			return false;
@@ -144,7 +144,7 @@
 		else {
 			$('#id_dirty').attr('value', dirty_ids.join(','));
 		}
-		
+
 		return true;
 	};
 
@@ -175,7 +175,7 @@
 				satchmo.initial_vals[this.id] = val;
 			}
 		)
-        
+
         $('#variation_options .checkbox input').each(function() {
             var parts = this.id.split("__");
             var key = parts[1];
@@ -188,32 +188,32 @@
             satchmo.select_all();
             return false;
         });
-    
+
         $('#select_these').click(function() {
             satchmo.select_these(false, true);
             return false;
         });
-        
+
         $('#select_only_these').click(function() {
             satchmo.select_these(true, true);
             return false;
         });
-        
+
         $('#deselect_these').click(function() {
             satchmo.select_these(false, false);
             return false;
         });
-        
+
         $('#deselect_all').click(function() {
             satchmo.deselect_all();
             return false;
         });
-        
+
         $('#show_all').click(function() {
             satchmo.show_all();
             return false;
         });
-        
+
         $('#hide_inactive').click(function() {
             satchmo.hide_inactive();
             return false;
@@ -222,7 +222,7 @@
 		$('#id_submit').click(function() {
 			satchmo.submit_dirty_variations();
 		})
-        
+
     });
     </script>
 {% endblock %}
@@ -238,9 +238,9 @@
 <div style="font-style: italic; font-size: .9em;">
     {% blocktrans %}
     <p>The Variation Manager helps create the exact set of variations you need for your Configurable Product</p>
-    <p>Make choices from the Option Groups below, and then click one of the helper links 
+    <p>Make choices from the Option Groups below, and then click one of the helper links
     below them to select or deselect variations which have those options.</p>
-    <p>Fine tune the active variations by putting a checkmark next to those that you want to keep or 
+    <p>Fine tune the active variations by putting a checkmark next to those that you want to keep or
     create, then then click <b>Update Variations</b>.
     </p>
     {% endblocktrans %}
@@ -262,8 +262,8 @@
             {{ field }}
             {% if field.errors %}
     		<span class="error">{{ field.errors }}</span><br/>
-	        {% endif %}    
-            
+	        {% endif %}
+
         </td>
     </tr>
     {% endwith %}

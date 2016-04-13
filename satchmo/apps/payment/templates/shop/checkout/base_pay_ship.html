@@ -1,4 +1,4 @@
-{% extends "shop/base.html" %}{% load url from future %}
+{% extends "shop/base.html" %}
 {% load i18n %}
 
 {% block navbar %}
@@ -31,9 +31,9 @@
     {% block payment_table %}
     {# put your payment module specific rows here.  For example, CC number. #}
     {% endblock %}
-    
+
     {% if cart.is_shippable %}
-    
+
             {% if form.shipping_hidden %}
                 {{ form.shipping }}
                 </table>
@@ -61,7 +61,7 @@
     </table>
 
     {% endif %}
-    
+
     {% if form.shipping.field.choices|length_is:0 and cart.is_shippable %}
         <h4>{% blocktrans %}No valid shipping method is available. Please verify that your address is correct.{% endblocktrans %}</h4>
     {% else %}
