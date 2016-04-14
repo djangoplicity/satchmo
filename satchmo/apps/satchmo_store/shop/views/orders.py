@@ -5,17 +5,17 @@ from django.utils.translation import ugettext_lazy as _
 from satchmo_store.contact.models import Contact
 from satchmo_store.shop.models import Order
 from satchmo_utils.views import bad_or_missing
-from livesettings import config_value 
+from livesettings.functions import config_value
 
 def order_history(request):
     orders = None
     try:
         contact = Contact.objects.from_request(request, create=False)
         orders = Order.objects.filter(contact=contact).order_by('-time_stamp')
-    
+
     except Contact.DoesNotExist:
         contact = None
-        
+
     ctx = RequestContext(request, {
         'contact' : contact,
         'default_view_tax': config_value('TAX', 'DEFAULT_VIEW_TAX'),

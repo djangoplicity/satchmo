@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from livesettings import config_get_group
+from livesettings.functions import config_get_group
 from payment.config import gateway_live
 
 def auth_required(request):
@@ -21,7 +21,7 @@ def get_cred():
     else:
         merchant_id = payment_module.MERCHANT_TEST_ID.value
         merchant_key = payment_module.MERCHANT_TEST_KEY.value
-    
+
     return (merchant_id, merchant_key)
 
 def get_url():

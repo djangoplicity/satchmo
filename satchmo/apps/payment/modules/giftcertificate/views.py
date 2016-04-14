@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from forms import GiftCertCodeForm, GiftCertPayShipForm
 from models import GiftCertificate, GIFTCODE_KEY
-from livesettings import config_get_group
+from livesettings.functions import config_get_group
 from satchmo_store.shop.models import Order
 from payment.utils import pay_ship_save, get_or_create_order
 from payment.views import confirm, payship
@@ -19,7 +19,7 @@ log = logging.getLogger("giftcertificate.views")
 
 gc = config_get_group('PAYMENT_GIFTCERTIFICATE')
 
-    
+
 def giftcert_pay_ship_process_form(request, contact, working_cart, payment_module, allow_skip):
     if request.method == "POST":
         new_data = request.POST.copy()
@@ -28,13 +28,13 @@ def giftcert_pay_ship_process_form(request, contact, working_cart, payment_modul
             data = form.cleaned_data
 
             # Create a new order.
-            newOrder = get_or_create_order(request, working_cart, contact, data)            
+            newOrder = get_or_create_order(request, working_cart, contact, data)
             newOrder.add_variable(GIFTCODE_KEY, data['giftcode'])
-            
+
             request.session['orderID'] = newOrder.id
-            
+
             url = None
-            gift_certificate = GiftCertificate.objects.get(code=data['giftcode'], valid=True, 
+            gift_certificate = GiftCertificate.objects.get(code=data['giftcode'], valid=True,
                     site=Site.objects.get_current())
             # Check to see if the giftcertificate is not enough
             # If it isn't, then process it and prompt for next payment method
@@ -50,20 +50,20 @@ def giftcert_pay_ship_process_form(request, contact, working_cart, payment_modul
 
     return (False, form)
 
-    
+
 def pay_ship_info(request):
-    return payship.base_pay_ship_info(request, 
-        gc, 
+    return payship.base_pay_ship_info(request,
+        gc,
         giftcert_pay_ship_process_form,
         template="shop/checkout/giftcertificate/pay_ship.html")
-    
+
 def confirm_info(request, template="shop/checkout/giftcertificate/confirm.html"):
     try:
         order = Order.objects.get(id=request.session['orderID'])
         giftcert = GiftCertificate.objects.from_order(order)
     except (Order.DoesNotExist, GiftCertificate.DoesNotExist, KeyError):
         giftcert = None
-           
+
     controller = confirm.ConfirmController(request, gc)
     controller.templates['CONFIRM'] = template
     controller.extra_context={'giftcert' : giftcert}
@@ -71,12 +71,12 @@ def confirm_info(request, template="shop/checkout/giftcertificate/confirm.html")
     return controller.response
 
 def check_balance(request):
-    if request.method == "GET":        
+    if request.method == "GET":
         code = request.GET.get('code', '')
         if code:
             try:
-                gc = GiftCertificate.objects.get(code=code, 
-                    value=True, 
+                gc = GiftCertificate.objects.get(code=code,
+                    value=True,
                     site=Site.objects.get_current())
                 success = True
                 balance = gc.balance
@@ -84,7 +84,7 @@ def check_balance(request):
                 success = False
         else:
             success = False
-        
+
         ctx = RequestContext(request, {
             'code' : code,
             'success' : success,

@@ -2,7 +2,7 @@
 Urls for wishlists, note that this does not have to get added manually to the urls, it will be added automatically by satchmo core if this app is installed.
 """
 from django.conf.urls import *
-from livesettings import config_value
+from livesettings.functions import config_value
 import logging
 
 log = logging.getLogger('wishlist.urls')
@@ -18,7 +18,7 @@ urlpatterns = patterns('satchmo_ext.wishlist.views',
 patterns_fn = patterns
 
 def add_wishlist_urls(sender, patterns=(), **kwargs):
-    wishbase = r'^' + config_value('SHOP','WISHLIST_SLUG') + '/'    
+    wishbase = r'^' + config_value('SHOP','WISHLIST_SLUG') + '/'
     log.debug('adding wishlist urls at %s', wishbase)
     wishpatterns = patterns_fn('',
         (wishbase, include('satchmo_ext.wishlist.urls'))

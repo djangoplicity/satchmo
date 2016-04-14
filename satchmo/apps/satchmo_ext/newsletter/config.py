@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from livesettings import *
+from livesettings.functions import *
 from satchmo_utils import load_module
 from satchmo_store.shop import get_satchmo_setting
 
@@ -15,7 +15,7 @@ NEWSLETTER_ACTIVE = config_register(StringValue(NEWSLETTER_GROUP,
             ('satchmo_ext.newsletter.simple', _('Simple list')),
              ('satchmo_ext.newsletter.mailman', _('Mailman'))]
     ))
-    
+
 config_register(StringValue(NEWSLETTER_GROUP,
     'NEWSLETTER_NAME',
     description=_("Name of Newsletter"),

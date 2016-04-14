@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %}{% load url from future %}
+{% extends "admin/base_site.html" %}
 {% load i18n admin_static admin_modify %}
 
 {% block extrastyle %}
@@ -28,7 +28,7 @@ tr.ConfigurableProduct {
         if (c) {
             $('#id_format')[0].value=c;
         }
-  
+
         $('#id_format').change(function() {
             var fmt = $('#id_format')[0].value
             $.cookie("satchmoadmin_exportformat", fmt, {expires: 7});
@@ -92,7 +92,7 @@ tr.ConfigurableProduct {
                         <td><a href="{% url 'admin:product_product_change' field.field.product_id %}">{{ field.label_tag }}</a>
                             {% if field.errors %}
                     		<span class="error">{{ field.errors }}</span><br/>
-            		        {% endif %}    
+            		        {% endif %}
                         </td>
                     {% endif %}
                         <td>{{ field.help_text}}</td></tr>

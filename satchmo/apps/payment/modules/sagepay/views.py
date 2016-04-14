@@ -4,18 +4,18 @@ from django import http
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from livesettings import config_get_group
+from livesettings.functions import config_get_group
 from payment.views import payship, confirm
 import logging
 from satchmo_utils.dynamic import lookup_template
 
 log = logging.getLogger('sagepay.views')
-    
+
 def pay_ship_info(request):
-    return payship.credit_pay_ship_info(request, 
+    return payship.credit_pay_ship_info(request,
             config_get_group('PAYMENT_SAGEPAY'),
             template="shop/checkout/sagepay/pay_ship.html")
-    
+
 def confirm_info(request, template='shop/checkout/sagepay/confirm.html', extra_context={}):
     payment_module = config_get_group('PAYMENT_SAGEPAY')
     controller = confirm.ConfirmController(request, payment_module)
@@ -24,18 +24,18 @@ def confirm_info(request, template='shop/checkout/sagepay/confirm.html', extra_c
     controller.onForm = secure3d_form_handler
     controller.confirm()
     return controller.response
-            
-def confirm_secure3d(request, secure3d_template='shop/checkout/sagepay/secure3d_form.html', 
+
+def confirm_secure3d(request, secure3d_template='shop/checkout/sagepay/secure3d_form.html',
     confirm_template='shop/checkout/confirm.html', extra_context={}):
     """Handles confirming an order and processing the charges when secured by secure3d.
- 
+
     """
     payment_module = config_get_group('PAYMENT_SAGEPAY')
     controller = confirm.ConfirmController(request, payment_module, extra_context=extra_context)
     controller.template['CONFIRM'] = confirm_template
     if not controller.sanity_check():
         return controller.response
-    
+
     auth3d = request.session.get('3D', None)
     if not auth3d:
         controller.processorMessage = _('3D Secure transaction expired. Please try again.')
@@ -59,7 +59,7 @@ def confirm_secure3d(request, secure3d_template='shop/checkout/sagepay/secure3d_
         else:
             template = lookup_template(payment_module, secure3d_template)
             ctx =RequestContext(request, {
-                'order': controller.order, 'auth': auth3d 
+                'order': controller.order, 'auth': auth3d
                 })
             return render_to_response(template, context_instance=ctx)
 
@@ -68,14 +68,14 @@ def confirm_secure3d(request, secure3d_template='shop/checkout/sagepay/secure3d_
 def secure3d_form_handler(controller):
     """At the confirmation step, sage pay may ask for a secure3d authentication.  This method
     catches that, and if so, sends to that step, otherwise the form as normal"""
-    
+
     if controller.processorReasonCode == '3DAUTH':
-        log.debug('caught secure 3D request for order #%i, putting 3D into session as %s', 
+        log.debug('caught secure 3D request for order #%i, putting 3D into session as %s',
             controller.order.id, controller.processorReasonCode)
-            
+
         redirectUrl = controller.lookup_url('satchmo_checkout-secure3d')
         controller.processor.response['TermUrl'] = redirectUrl
         controller.request.session['3D'] = controller.processorReasonCode
         return http.HttpResponseRedirect(redirectUrl)
-    
+
     return controller.onForm(controller)

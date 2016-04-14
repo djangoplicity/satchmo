@@ -1,4 +1,4 @@
-{% extends "product/product.html" %}{% load url from future %}
+{% extends "product/product.html" %}
 {% load i18n %}
 {% load thumbnail %}
 {% load satchmo_price %}
@@ -49,7 +49,7 @@
 
 {% trans "Quantity" %} <input type="text", size="2", name="quantity" id="quantity" value="1" class="priced" />
 <input type="hidden" name="productname" id="productname" value="{{product.slug}}" />
-<input type="submit" name="addcart" value="{% trans "Add to cart" %}" /> 
+<input type="submit" name="addcart" value="{% trans "Add to cart" %}" />
 {% plugin_point "product_add_buttons" %}
 {% plugin_point "product_form" %}
 </form>

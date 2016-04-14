@@ -1,4 +1,4 @@
-{% extends "shop/base.html" %}{% load url from future %}
+{% extends "shop/base.html" %}
 {% load i18n %}
 {% load satchmo_contact %}
 
@@ -11,7 +11,7 @@
 <h4>{% trans "Your Account info" %}</h4>
 {% if user_data %}
 {% with user_data.full_name as full_name %}
-<p>{% blocktrans %}Welcome, {{ full_name }}.{% endblocktrans %}</p> 
+<p>{% blocktrans %}Welcome, {{ full_name }}.{% endblocktrans %}</p>
 {% endwith %}
 
 <h5>{% trans "Your profile" %}</h5>
@@ -25,7 +25,7 @@
     <li>{% trans 'Newsletter:' %} {% if newsletter %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</li>
     {% endif %}
     <li>{% trans 'Billing Address:'%}<br/>{% addressblock user_data.billing_address %}</li>
-    <li>{% trans 'Shipping Address:'%}<br/>{% addressblock user_data.shipping_address %}</li>    
+    <li>{% trans 'Shipping Address:'%}<br/>{% addressblock user_data.shipping_address %}</li>
 </ul>
 <h5>{% trans "Address Book Entries" %}</h5>
 <ul class="profile">

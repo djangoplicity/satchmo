@@ -18,7 +18,7 @@ from django.core.cache import cache
 from django.template import Context, loader
 from django.utils.translation import ugettext as _
 from l10n.models import Country
-from livesettings import config_get_group, config_value
+from livesettings.functions import config_get_group, config_value
 from shipping.modules.base import BaseShipper
 import logging
 import urllib2
@@ -42,7 +42,7 @@ CODES = {'0': 'FIRST CLASS',
          '5': 'BPM',
          '6': 'MEDIA',
          '7': 'LIBRARY',
-         
+
          # these are here to avoid KeyErrors
          '2': 'INTL',
          '8': 'INTL',
@@ -53,7 +53,7 @@ CODES = {'0': 'FIRST CLASS',
          '14': 'INTL',
          '15': 'INTL',
         }
-        
+
 """
 International service codes
 
@@ -194,7 +194,7 @@ class Shipper(BaseShipper):
         if not self.is_intl:
             mail_type = CODES[self.service_type_code]
             if mail_type == 'INTL': return ''
-        
+
             if mail_type == 'FIRST CLASS':
                 self.api = None
             else:
@@ -202,7 +202,7 @@ class Shipper(BaseShipper):
         else:
             mail_type = None
             self.api = None
-        
+
         # calculate the weight of the entire order
         weight = Decimal('0.0')
         for item in cart.cartitem_set.all():
@@ -243,7 +243,7 @@ class Shipper(BaseShipper):
     def calculate(self, cart, contact):
         """
         Based on the chosen USPS method, we will do our call to USPS and see how
-        much it will cost. We will also need to store the results for further 
+        much it will cost. We will also need to store the results for further
         parsing and return via the methods above
         """
         from satchmo_store.shop.models import Config
@@ -298,7 +298,7 @@ class Shipper(BaseShipper):
                         #self.verbose_log('%s vs %s' % (service.attrib['ID'], self.service_type_code))
                         if service.attrib['ID'] == self.service_type_code and \
                             self.service_type_text.startswith('Int`l: '):
-                            
+
                             self.charges = service.find('.//Postage').text
                             self.delivery_days = service.find('.//SvcCommitments').text
                             #self.verbose_log('%s %s' % (self.charges, self.delivery_days))

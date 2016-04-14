@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
-from livesettings import *
+from livesettings.functions import *
+from livesettings.values import *
 
 SHIP_MODULES = config_get('SHIPPING', 'MODULES')
 SHIP_MODULES.add_choice(('shipping.modules.flat', _('Flat rate')))
@@ -21,7 +22,7 @@ config_register_list(
         requires=SHIP_MODULES,
         requiresvalue='shipping.modules.flat',
         default=u"U.S. Mail"),
-    
+
     StringValue(SHIPPING_GROUP,
         'FLAT_DAYS',
         description=_("Flat Delivery Days"),

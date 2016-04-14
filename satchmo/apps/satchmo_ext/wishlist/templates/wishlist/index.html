@@ -1,4 +1,4 @@
-{% extends "shop/base.html" %}{% load url from future %}
+{% extends "shop/base.html" %}
 {% load i18n %}
 {% load thumbnail %}
 {% load satchmo_category %}
@@ -16,7 +16,7 @@
 {% endif %}
 <div id="wishlist">
 <h3>{% trans "Wishlist" %}</h3>
-    {% for wish in wishlist %} 
+    {% for wish in wishlist %}
     {% with wish.product as product %}
         {% if forloop.first %} <ul>  {% endif %}
             <li>
@@ -24,7 +24,7 @@
                 {% thumbnail product.main_image.picture "85x85" as image %}
                 <a class="wishimage" href="{{ product.get_absolute_url }}"><img src="{{ image.url }}" width="{{ image.width }}" height="{{ image.height }}" /></a>
                 {% endthumbnail %}
-                    <a href="{{ product.get_absolute_url }}">{{ product.translated_name }}</a> 
+                    <a href="{{ product.get_absolute_url }}">{{ product.translated_name }}</a>
                     <span class="date">{% blocktrans with wish.create_date|date:"y-M-d" as create_date %}added on {{ create_date }}{% endblocktrans %}</span>
                 </div>
                 <form name="addform" action="{% url 'satchmo_wishlist_move_to_cart' %}" method="POST">{% csrf_token %}

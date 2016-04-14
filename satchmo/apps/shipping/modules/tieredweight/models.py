@@ -96,7 +96,7 @@ class Shipper(BaseShipper):
 
     def valid(self, order=None):
         """
-        Check if shipping is valid for country and set zone accordingly. Fallback 
+        Check if shipping is valid for country and set zone accordingly. Fallback
         to default zone if set
         """
         assert(self._calculated)
@@ -114,7 +114,7 @@ class Carrier(models.Model):
     name = models.CharField(_('carrier'), max_length=50)
     ordering = models.IntegerField(_('Ordering'), default=0)
     active = models.BooleanField(_('Active'), default=True)
-    default_zone = models.ForeignKey('Zone', verbose_name=_('default_zone'), 
+    default_zone = models.ForeignKey('Zone', verbose_name=_('default_zone'),
         related_name='default', null=True, blank=True)
 
 
@@ -123,6 +123,7 @@ class Carrier(models.Model):
 
 
     class Meta:
+        db_table = 'shipping_carrier'
         ordering = ['ordering',]
         verbose_name = _('carrier')
         verbose_name_plural = _('carriers')
@@ -149,6 +150,7 @@ class Zone(models.Model):
 
 
     class Meta:
+        db_table = 'shipping_zone'
         unique_together = ('carrier', 'name')
         ordering = ['carrier', 'name',]
         verbose_name = _('zone')
@@ -158,10 +160,10 @@ class Zone(models.Model):
     def _find_translation(self, language_code=None):
         if not language_code:
             language_code = get_language()
-    
+
         c = self.translations.filter(lang_code__exact=language_code)
         ct = c.count()
-    
+
         if not c or ct == 0:
             pos = language_code.find('-')
             if pos > -1:
@@ -171,17 +173,17 @@ class Zone(models.Model):
                 ct = c.count()
                 if ct > 0:
                     log.debug("%s: Found root language content for: [%s]", self, short_code)
-    
+
         if not c or ct == 0:
             #log.debug("Trying to find default language content for: %s", self)
             c = self.translations.filter(lang_code__istartswith=settings.LANGUAGE_CODE)
             ct = c.count()
-    
+
         if not c or ct == 0:
             #log.debug("Trying to find *any* language content for: %s", self)
             c = self.translations.all()
             ct = c.count()
-    
+
         if ct > 0:
             return c[0]
         else:
@@ -252,6 +254,7 @@ class ZoneTranslation(models.Model):
 
 
     class Meta:
+        db_table = 'shipping_zonetranslation'
         ordering = ['lang_code',]
         verbose_name = _('zone translation')
         verbose_name_plural = _('zone translations')
@@ -264,13 +267,14 @@ class WeightTier(models.Model):
         null=True, blank=True)
     price = models.DecimalField(_('shipping price'), max_digits=10, decimal_places=2)
     expires = models.DateField(_('expires'), null=True, blank=True)
-    
+
 
     def __unicode__(self):
         return u'Weight: %s (Total cost: %s)' % (self.min_weight, self.cost)
 
 
     class Meta:
+        db_table = 'shipping_weighttier'
         unique_together = ('zone', 'min_weight', 'expires')
         ordering = ['min_weight',]
         verbose_name = _('weight tier')

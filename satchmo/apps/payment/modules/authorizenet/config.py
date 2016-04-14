@@ -1,4 +1,4 @@
-from livesettings import *
+from livesettings.functions import *
 from django.utils.translation import ugettext_lazy as _
 
 # this is so that the translation utility will pick up the string
@@ -21,10 +21,10 @@ config_register_list(
         'CONNECTION_TEST',
         description=_("Submit to Test URL"),
         help_text=("""If you have a test account with authorize.net and you log in through
-https://test.authorize.net/gateway/transact.dll, then you should use the default 
-test URL.  If you do not have a test account you will get an Error 13 message 
-unless you change the URL to https://secure.authorize.net/gateway/transact.dll.  
-You will also need to login in to authorize.net and make sure your account has 
+https://test.authorize.net/gateway/transact.dll, then you should use the default
+test URL.  If you do not have a test account you will get an Error 13 message
+unless you change the URL to https://secure.authorize.net/gateway/transact.dll.
+You will also need to login in to authorize.net and make sure your account has
 test mode turned on.
 """),
         default='https://test.authorize.net/gateway/transact.dll'),

@@ -1,7 +1,7 @@
 """Sage Pay Form"""
 from django import forms
 from django.utils.translation import ugettext as _
-from livesettings import config_value
+from livesettings.functions import config_value
 from payment.forms import CreditPayShipForm, MONTHS
 from payment.modules.sagepay.config import REQUIRES_ISSUE_NUMBER
 import datetime
@@ -11,12 +11,12 @@ log = logging.getLogger('payment.sagepay.forms')
 
 class SagePayShipForm(CreditPayShipForm):
     """Adds fields required by Sage Pay to the Credit form."""
-    
+
     card_holder = forms.CharField(max_length=75, required=False)
     month_start = forms.ChoiceField(choices=[(1, '--')]+MONTHS, required=False)
     year_start = forms.ChoiceField(required=False)
     issue_num = forms.CharField(max_length=2, required=False)
-    
+
     def __init__(self, request, paymentmodule, *args, **kwargs):
         super(SagePayShipForm, self).__init__(request, paymentmodule, *args, **kwargs)
         cf = self.fields['card_holder']
@@ -33,8 +33,8 @@ class SagePayShipForm(CreditPayShipForm):
         """Save the order and the credit card details."""
         super(SagePayShipForm, self).save(request, cart, contact, payment_module)
         if data is None:
-            data = self.cleaned_data 
-        log.debug("data: %s", data)                       
+            data = self.cleaned_data
+        log.debug("data: %s", data)
         card_holder=data.get('card_holder', '')
         if not card_holder:
             card_holder = contact.full_name
@@ -50,7 +50,7 @@ class SagePayShipForm(CreditPayShipForm):
                 # TODO: raise some error to be caught by processor
         else:
             month_start=None
-            
+
         if year_start:
             try:
                 year_start = int(year_start)
@@ -59,9 +59,9 @@ class SagePayShipForm(CreditPayShipForm):
                 year_start = 1
         else:
             year_start=None
-        
+
         issue_num = data.get('issue_num', "")
-        
+
         self.cc.start_month=month_start
         self.cc.start_year=year_start
         self.cc.issue_num=issue_num
@@ -78,7 +78,7 @@ class SagePayShipForm(CreditPayShipForm):
 
     def clean_month_start(self):
         data = self.cleaned_data
-        
+
         self._maybe_require(data, 'month_start', _('You must provide a starting month when using this type of card.'))
 
         if data['month_start']:
@@ -86,14 +86,14 @@ class SagePayShipForm(CreditPayShipForm):
                 v = int(self.cleaned_data['month_start'])
             except ValueError:
                 raise forms.ValidationError(_("This must be a number"))
-            
+
             if not v>0 and v<13:
                 raise forms.ValidationError(_("Out of range, must be 1-12"))
-            
+
     def clean_year_start(self):
         data = self.cleaned_data
         self._maybe_require(data, 'credit_type', _('You must provide a starting year when using this type of card.'))
-        
+
         if data['year_start']:
             try:
                 v = int(self.cleaned_data['year_start'])

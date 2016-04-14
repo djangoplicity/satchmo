@@ -1,4 +1,4 @@
-from livesettings import config_choice_values, SettingNotSet
+from livesettings.functions import config_choice_values, SettingNotSet
 
 def shipping_choices():
     try:

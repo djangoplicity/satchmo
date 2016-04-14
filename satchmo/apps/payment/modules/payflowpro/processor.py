@@ -52,7 +52,7 @@ class PaymentProcessor(BasePaymentProcessor):
                                       order.credit_card.expire_year % 100),
                 cvv2=order.credit_card.ccv,
                 ),
-            
+
             'amount': Amount(amt=balance,),
 
             'address': Address(
@@ -99,7 +99,7 @@ class PaymentProcessor(BasePaymentProcessor):
         """
         if unconsumed_data:
             self.log.warn("Something went wrong with python-payflowpro. "
-                          "We got some unconsumed data: %s" % 
+                          "We got some unconsumed data: %s" %
                           str(unconsumed_data))
 
     def _log_responses(self, responses):
@@ -133,7 +133,7 @@ class PaymentProcessor(BasePaymentProcessor):
             self.log_extra('Authorizing payment of %s for %s', amount, order)
 
             data = self.get_charge_data(amount=amount)
-            data['extras'] = [data['address'], data['ship_address'], 
+            data['extras'] = [data['address'], data['ship_address'],
                               data['customer_info'],]
 
             result = self.send_post(data=data, testing=testing,
@@ -188,7 +188,7 @@ class PaymentProcessor(BasePaymentProcessor):
             self.log_extra('Capturing payment for %s', order)
 
             data = self.get_charge_data(amount=amount)
-            data['extras'] = [data['address'], data['ship_address'], 
+            data['extras'] = [data['address'], data['ship_address'],
                               data['customer_info'],]
             result = self.send_post(data=data, post_func=self.send_sale_post,
                                      testing=testing,)
@@ -238,7 +238,7 @@ class PaymentProcessor(BasePaymentProcessor):
             data['authorization_id'])
         def nothing(*args, **kwargs):
             return None
-        return responses, unconsumed_data, nothing 
+        return responses, unconsumed_data, nothing
 
     def send_sale_post(self, data):
         """
@@ -299,7 +299,7 @@ class PaymentProcessor(BasePaymentProcessor):
                 payment = self.record_failure(
                     amount=amount, transaction_id=transaction_id,
                     reason_code=reason_code, details=response_text)
-                
+
         self.log_extra("Returning success=%s, reason=%s, response_text=%s",
                        success, reason_code, response_text)
 
@@ -313,7 +313,7 @@ if __name__ == "__main__":
     sure everything is ok
     """
     import os
-    from livesettings import config_get_group
+    from livesettings.functions import config_get_group
 
     # Set up some dummy classes to mimic classes being passed through Satchmo
     class testContact(object):

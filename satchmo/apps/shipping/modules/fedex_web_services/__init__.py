@@ -1,5 +1,5 @@
 import shipper
-from livesettings import config_choice_values, config_get_group
+from livesettings.functions import config_choice_values, config_get_group
 from fedex.config import FedexConfig
 import logging
 
@@ -32,7 +32,7 @@ def get_methods():
     if not settings.AUTHENTICATION_PASSWORD.value:
         log.warn("No fedex authentication password found in settings")
         return
-        
+
     CONFIG_OBJ = get_config_obj(settings)
     packaging = settings.PACKAGING.value or "YOUR_PACKAGING"
     default_weight = settings.DEFAULT_ITEM_WEIGHT.value or 0.5

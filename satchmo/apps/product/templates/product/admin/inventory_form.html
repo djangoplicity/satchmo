@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %}{% load url from future %}
+{% extends "admin/base_site.html" %}
 {% load i18n admin_static admin_modify %}
 
 {% block extrastyle %}
@@ -31,19 +31,19 @@ tr.ConfigurableProduct {
             satchmo.disable_zeroes('input.qty.ProductVariation', 'active')
         })
     });
-    
+
     var satchmo = satchmo || {};
     satchmo.toggle = function(cls, state) {
         $(cls).each(function() { this.checked = state });
        return false;
     };
-    
+
     satchmo.disable_zeroes = function(src, dest) {
         $(src).each(function() {
             satchmo.disable_zero(this, dest)
         });
     };
-    
+
     satchmo.disable_zero = function(elt, dest) {
         var v = $(elt).val();
         if (v == '0') {
