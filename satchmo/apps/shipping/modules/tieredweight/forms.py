@@ -20,7 +20,7 @@ class ZoneAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ZoneAdminForm, self).__init__(*args, **kwargs)
         zones = None
-        if 'instance' in kwargs:
+        if 'instance' in kwargs and kwargs['instance']:
             carrier = kwargs['instance'].carrier.pk
             zones = Carrier.objects.get(pk=carrier).zones.exclude(pk=kwargs['instance'].pk)
         else:
