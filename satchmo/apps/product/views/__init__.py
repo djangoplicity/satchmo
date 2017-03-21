@@ -114,9 +114,12 @@ def get_product(request, product_slug=None, selected_options=(),
     errors = [m for m in get_messages(request) if m.level == constants.ERROR]
 
     try:
-        product = Product.objects.get_by_site(active=True, slug=product_slug)
+        product = Product.objects.get_by_site(slug=product_slug)
     except Product.DoesNotExist:
         return bad_or_missing(request, _('The product you have requested does not exist.'))
+
+    if not product.active:
+        return bad_or_missing(request, _('The product you have requested is currently out of stock.'))
 
     if default_view_tax is None:
         default_view_tax = config_value('TAX', 'DEFAULT_VIEW_TAX')
