@@ -1161,7 +1161,10 @@ class OrderItem(models.Model):
         max_digits=18, decimal_places=10, blank=True, null=True)
 
     def __unicode__(self):
-        return self.product.translated_name()
+        s = self.product.translated_name()
+        if self.product.slug:
+            s += u' - {}'.format(self.product.slug)
+        return s
 
     def _get_category(self):
         return(self.product.get_category.translated_name())
