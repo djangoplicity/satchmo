@@ -84,7 +84,7 @@ class OrderOptions(AutocompleteAdmin):
     inlines = [OrderItem_Inline, OrderStatus_Inline, OrderVariable_Inline,
         OrderTaxDetail_Inline, OrderAuthorizationDetail_Inline,
         OrderPaymentDetail_Inline, OrderPaymentFailureDetail_Inline]
-    readonly_fields = ('status',)
+    readonly_fields = ('status', 'contact')
 
 class OrderItemOptions(admin.ModelAdmin):
     inlines = [OrderItemDetail_Inline]
