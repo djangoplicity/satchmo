@@ -20,10 +20,13 @@ def settings(request):
 
     all_categories = Category.objects.by_site()
 
-    try:
-        sale = Discount.objects.get_sale()
-    except Discount.DoesNotExist:
-        sale = None
+	# We don't care about the store-wide sale, commented out to hide extra
+	# SQL queries
+    #  try:
+    #      sale = Discount.objects.get_sale()
+    #  except Discount.DoesNotExist:
+    #      sale = None
+    sale = None
 
     ctx = {
         'shop_base': get_satchmo_setting('SHOP_BASE'),
