@@ -391,6 +391,14 @@ class Cart(models.Model):
         else:
             item_to_modify.save()
 
+    @property
+    def has_chile_only_products(self):
+        return self.cartitem_set.filter(
+            product__slug__in=[
+                '2019_solar_eclipse_chile',
+                'eclipse_test_chile',
+            ]
+        ).exists()
 
     def merge_carts(self, src_cart):
         """
