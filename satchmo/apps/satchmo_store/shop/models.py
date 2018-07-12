@@ -400,6 +400,15 @@ class Cart(models.Model):
             ]
         ).exists()
 
+    @property
+    def has_non_chile_products(self):
+        return self.cartitem_set.filter(
+            product__slug__in=[
+                '2019_solar_eclipse',
+                'eclipse_test_non_chile',
+            ]
+        ).exists()
+
     def merge_carts(self, src_cart):
         """
         Merge the items from the src_cart into
