@@ -409,6 +409,10 @@ class Cart(models.Model):
             ]
         ).exists()
 
+    @property
+    def has_inactive_products(self):
+        return self.cartitem_set.filter(product__active=False).exists()
+
     def merge_carts(self, src_cart):
         """
         Merge the items from the src_cart into
