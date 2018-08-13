@@ -1,5 +1,4 @@
 from django import http
-from django.template import RequestContext
 from django.template import loader
 from django.utils.translation import ugettext as _
 
@@ -35,11 +34,11 @@ ccInfo = (
     ( 'SWITCH', '6333', 19),
     ( 'SWITCH', '6759', 19),
     ( 'SOLO', '6334', 16),
-    ( 'SOLO', '6767', 16),  
+    ( 'SOLO', '6767', 16),
     ( 'SOLO', '6334', 18),
-    ( 'SOLO', '6767', 18),      
+    ( 'SOLO', '6767', 18),
     ( 'SOLO', '6334', 19),
-    ( 'SOLO', '6767', 19),    
+    ( 'SOLO', '6767', 19),
     ( 'MAESTRO', '5020', 16),
     ( 'MAESTRO', '6', 16),
     ( 'MC', '51', 16),
@@ -119,5 +118,4 @@ def bad_or_missing(request, msg):
         return resp
     else:
         template = loader.get_template('shop/404.html')
-        context = RequestContext(request, {'message': msg})
-        return http.HttpResponseNotFound(template.render(context))
+        return http.HttpResponseNotFound(template.render({'message': msg}, request))

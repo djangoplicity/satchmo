@@ -391,6 +391,27 @@ class Cart(models.Model):
         else:
             item_to_modify.save()
 
+    @property
+    def has_chile_only_products(self):
+        return self.cartitem_set.filter(
+            product__slug__in=[
+                '2019_solar_eclipse_chile',
+                'eclipse_test_chile',
+            ]
+        ).exists()
+
+    @property
+    def has_non_chile_products(self):
+        return self.cartitem_set.filter(
+            product__slug__in=[
+                '2019_solar_eclipse',
+                'eclipse_test_non_chile',
+            ]
+        ).exists()
+
+    @property
+    def has_inactive_products(self):
+        return self.cartitem_set.filter(product__active=False).exists()
 
     def merge_carts(self, src_cart):
         """
@@ -1161,7 +1182,10 @@ class OrderItem(models.Model):
         max_digits=18, decimal_places=10, blank=True, null=True)
 
     def __unicode__(self):
-        return self.product.translated_name()
+        s = self.product.translated_name()
+        if self.product.slug:
+            s += u' - {}'.format(self.product.slug)
+        return s
 
     def _get_category(self):
         return(self.product.get_category.translated_name())

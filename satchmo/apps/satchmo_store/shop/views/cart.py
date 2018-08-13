@@ -30,7 +30,7 @@ log = logging.getLogger('shop.views.cart')
 
 def _json_response(data, error=False, **kwargs):
     response = HttpResponse( json.dumps( data ),
-                            mimetype = 'application/json')
+                            content_type = 'application/json')
 
     if error:
         response.status_code = 400

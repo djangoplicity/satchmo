@@ -26,3 +26,4 @@ build
 *.egg
 .git
 .emacs.desktop*
+.nfs*
