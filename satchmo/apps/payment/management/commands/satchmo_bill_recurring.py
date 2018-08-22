@@ -1,6 +1,6 @@
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = ("Invokes recurring billing system to do stuff like "
             "charge subscription customers each month.  You typically "
             "want to invoke this from a cron script.  For non-root "

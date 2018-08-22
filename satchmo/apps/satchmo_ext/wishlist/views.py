@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.core import urlresolvers
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.safestring import mark_safe
 from django.core.serializers.json import DjangoJSONEncoder
@@ -26,15 +25,15 @@ def wishlist_view(request, message=""):
         contact = Contact.objects.from_request(request)
     except Contact.DoesNotExist:
         return _wishlist_requires_login(request)
-        
+
     wishes = ProductWish.objects.filter(contact=contact)
 
-    ctx = RequestContext(request, {
+    ctx = {
         'wishlist' : wishes,
         'wishlist_message' : message,
-    })
+    }
 
-    return render_to_response('wishlist/index.html', context_instance=ctx)
+    return render(request, 'wishlist/index.html', ctx)
 
 def wishlist_add(request):
     """Add an item to the wishlist."""
@@ -42,7 +41,7 @@ def wishlist_add(request):
         contact = Contact.objects.from_request(request)
     except Contact.DoesNotExist:
         return _wishlist_requires_login(request)
-        
+
     log.debug('FORM: %s', request.POST)
     formdata = request.POST.copy()
     productslug = None
@@ -51,11 +50,11 @@ def wishlist_add(request):
     try:
         product, details = product_from_post(productslug, formdata)
         template = find_product_template(product)
-        
+
     except (Product.DoesNotExist, MultiValueDictKeyError):
         log.debug("Could not find product: %s", productslug)
         return bad_or_missing(request, _('The product you have requested does not exist.'))
-        
+
     wish = ProductWish.objects.create_if_new(product, contact, details)
     url = urlresolvers.reverse('satchmo_wishlist_view')
     return HttpResponseRedirect(url)
@@ -110,24 +109,24 @@ def wishlist_move_to_cart(request):
             cart.add_item(wish.product, number_added=1, details=wish.details)
         except CartAddProhibited, cap:
             msg = _("Wishlist product '%(product)s' could't be added to the cart. %(details)s") % {
-                'product' : wish.product.translated_name(), 
+                'product' : wish.product.translated_name(),
                 'details' : cap.message
                 }
             return wishlist_view(request, message=msg)
-            
+
         url = urlresolvers.reverse('satchmo_cart')
         satchmo_cart_changed.send(cart, cart=cart, request=request)
         return HttpResponseRedirect(url)
     else:
-        return wishlist_view(request)    
-    
+        return wishlist_view(request)
+
 def wishlist_remove(request):
     contact = Contact.objects.from_request(request)
     if not contact:
         return _wishlist_requires_login(request)
-            
+
     success, msg = _wishlist_remove(request)
-        
+
     return wishlist_view(request, message=msg)
 
 def wishlist_remove_ajax(request, template="shop/json.html"):
@@ -139,9 +138,9 @@ def wishlist_remove_ajax(request, template="shop/json.html"):
     }
     encoded = DjangoJSONEncoder().encode(data)
     encoded = mark_safe(encoded)
-    
+
     return render_to_response(template, {'json' : encoded})
-    
+
 def _wish_from_post(request):
     wid = request.POST.get('id', None)
     msg = ""
@@ -152,7 +151,7 @@ def _wish_from_post(request):
         except (TypeError, ValueError):
             msg = _("No such wishlist item.")
             wid = -1
-        
+
         if wid > -1:
             contact = Contact.objects.from_request(request)
             if not contact:
@@ -164,9 +163,9 @@ def _wish_from_post(request):
                     msg = _("No such wishlist item.")
         else:
             msg = _("No such wishlist item.")
-            
+
     return wish, msg
-    
+
 def _wishlist_remove(request):
     success = False
     msg = ""
@@ -189,8 +188,7 @@ order_success.connect(_remove_wishes_on_order, sender=Order)
 
 def _wishlist_requires_login(request):
     log.debug("wishlist requires login")
-    ctx = RequestContext(request, {
+    ctx = {
         'login_url' : settings.LOGIN_URL
-        })
-    return render_to_response('wishlist/login_required.html',
-                              context_instance=ctx)
+        }
+    return render(request, 'wishlist/login_required.html', ctx)

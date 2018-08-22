@@ -45,7 +45,7 @@ remaining paths can be assumed to be unsecure and handled by the middleware.
 This package is inspired by Antonio Cavedoni's SSL Middleware
 
 Satchmo notes:
-This package has also merged the main concepts of Antonio Cavedoni's SSL Middleware, 
+This package has also merged the main concepts of Antonio Cavedoni's SSL Middleware,
 to allow for better integration with other sites, and to easily allow admin pages to
 be secured.
 
@@ -68,37 +68,27 @@ SSL = 'SSL'
 SSLPORT=getattr(settings, 'SSL_PORT', None)
 
 class SSLRedirect:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         if SSL in view_kwargs:
             secure = view_kwargs[SSL]
             del view_kwargs[SSL]
         else:
             secure = False
-            
+
         if not secure:
             for path in HTTPS_PATHS:
                 if request.path.startswith("/%s" % path):
                     secure = True
                     break
 
-        if not secure == request_is_secure(request):
-            return self._redirect(request, secure)
-
-    def _redirect(self, request, secure):
-        if settings.DEBUG and request.method == 'POST':
-            raise RuntimeError(
-"""Django can't perform a SSL redirect while maintaining POST data.
-Please structure your views so that redirects only occur during GETs.""")
-
-        protocol = secure and "https" or "http"
-        host = "%s://%s" % (protocol, request.get_host())
-        # In certain proxying situations, we need to strip out the 443 port
-        # in order to prevent inifinite redirects
-        if not secure:
-            host = host.replace(':443','')
-        if secure and SSLPORT:
-            host = "%s:%s" % (host, SSLPORT)
-            
-        newurl = "%s%s" % (host, iri_to_uri(request.get_full_path()))
-
-        return HttpResponseRedirect(newurl)
+        if (not secure == request_is_secure(request)) and not settings.DEBUG:
+            raise RuntimeError('Redirect to https has been disabled in Satchmo '
+                'and show be configured on the server side, http requests now '
+                'fail here')

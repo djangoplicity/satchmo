@@ -1,7 +1,6 @@
 from django import http
 from django.core.paginator import Paginator, InvalidPage
-from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, render
 from livesettings.functions import config_value
 from product.models import Product
 from product.queries import bestsellers
@@ -14,10 +13,10 @@ def display_bestsellers(request, count=0, template='product/best_sellers.html'):
     if count == 0:
         count = config_value('PRODUCT','NUM_PAGINATED')
 
-    ctx = RequestContext(request, {
+    ctx = {
         'products' : bestsellers(count),
-    })
-    return render_to_response(template, context_instance=ctx)
+    }
+    return render(request, template, ctx)
 
 def display_recent(request, page=0, count=0, template='product/recently_added.html'):
     """Display a list of recently added products."""
@@ -37,8 +36,8 @@ def display_recent(request, page=0, count=0, template='product/recently_added.ht
     except InvalidPage:
         currentpage = None
 
-    ctx = RequestContext(request, {
+    ctx = {
         'page' : currentpage,
         'paginator' : paginator,
-    })
-    return render_to_response(template, context_instance=ctx)
+    }
+    return render(request, template, ctx)

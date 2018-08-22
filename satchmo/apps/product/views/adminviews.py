@@ -2,8 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.core import urlresolvers
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 from product.forms import VariationManagerForm, InventoryForm, ProductExportForm, ProductImportForm
@@ -26,13 +25,12 @@ def edit_inventory(request):
     else:
         form = InventoryForm()
 
-    ctx = RequestContext(request, {
+    ctx = {
         'title' : _('Inventory Editor'),
         'form' : form
-        })
+        }
 
-    return render_to_response('product/admin/inventory_form.html',
-                              context_instance=ctx)
+    return render(request, 'product/admin/inventory_form.html', ctx)
 
 edit_inventory = user_passes_test(lambda u: u.is_authenticated() and u.is_staff, login_url='/accounts/login/')(edit_inventory)
 
@@ -48,13 +46,13 @@ def export_products(request, template='product/admin/product_export_form.html'):
     fileform = ProductImportForm()
 
 
-    ctx = RequestContext(request, {
+    ctx = {
         'title' : _('Product Import/Export'),
         'form' : form,
         'importform': fileform
-        })
+        }
 
-    return render_to_response(template, context_instance=ctx)
+    return render(request, template, ctx)
 
 export_products = user_passes_test(lambda u: u.is_authenticated() and u.is_staff, login_url='/accounts/login/')(export_products)
 
@@ -75,12 +73,11 @@ def import_products(request, maxsize=10000000):
             errors.append('File: %s' % request.FILES.keys())
             errors.append(_('No upload file found'))
 
-        ctx = RequestContext(request, {
+        ctx = {
             'errors' : errors,
             'results' : results
-        })
-        return render_to_response("product/admin/product_import_result.html",
-                                  context_instance=ctx)
+        }
+        return render(request, "product/admin/product_import_result.html", ctx)
     else:
         url = urlresolvers.reverse('satchmo_admin_product_export')
         return HttpResponseRedirect(url)
@@ -98,12 +95,11 @@ import_products = user_passes_test(lambda u: u.is_authenticated() and u.is_staff
 
 def variation_list(request):
     products = Product.objects.filter(configurableproduct__in = ConfigurableProduct.objects.all())
-    ctx = RequestContext(request, {
+    ctx = {
            'products' : products,
-    })
+    }
 
-    return render_to_response('product/admin/variation_manager_list.html',
-                              context_instance=ctx)
+    return render(request, 'product/admin/variation_manager_list.html', ctx)
 
 
 def variation_manager(request, product_id = ""):
@@ -141,11 +137,10 @@ def variation_manager(request, product_id = ""):
     else:
         form = VariationManagerForm(product=product)
 
-    ctx = RequestContext(request, {
+    ctx = {
         'product' : product,
         'form' : form,
-    })
-    return render_to_response('product/admin/variation_manager.html',
-                              context_instance=ctx)
+    }
+    return render(request, 'product/admin/variation_manager.html', ctx)
 
 variation_manager = user_passes_test(lambda u: u.is_authenticated() and u.is_staff, login_url='/accounts/login/')(variation_manager)

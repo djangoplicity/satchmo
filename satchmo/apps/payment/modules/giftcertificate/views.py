@@ -1,7 +1,6 @@
 from django import http
 from django.contrib.sites.models import Site
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from forms import GiftCertCodeForm, GiftCertPayShipForm
 from models import GiftCertificate, GIFTCODE_KEY
@@ -85,17 +84,16 @@ def check_balance(request):
         else:
             success = False
 
-        ctx = RequestContext(request, {
+        ctx = {
             'code' : code,
             'success' : success,
             'balance' : balance,
             'giftcertificate' : gc
-        })
+        }
     else:
         form = GiftCertCodeForm()
-        ctx = RequestContext(request, {
+        ctx = {
             'code' : '',
             'form' : form
-        })
-    return render_to_response('giftcertificate/balance.html',
-                              context_instance=ctx)
+        }
+    return render(request, 'giftcertificate/balance.html', ctx)

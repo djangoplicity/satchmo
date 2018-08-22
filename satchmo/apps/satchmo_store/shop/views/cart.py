@@ -3,8 +3,7 @@ from django.contrib import messages
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
+from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.safestring import mark_safe
 import json
@@ -122,13 +121,13 @@ def display(request, cart=None, error_message='', default_view_tax=None):
                            cart=cart,
                            request=request)
 
-    context = RequestContext(request, {
+    context = {
         'cart': cart,
         'error_message': error_message,
         'default_view_tax' : default_view_tax,
         'sale' : sale,
-        })
-    return render_to_response('shop/cart.html', context_instance=context)
+        }
+    return render(request, 'shop/cart.html', context)
 
 display = never_cache(display)
 
@@ -236,7 +235,7 @@ def add_multiple(request, redirect_to='satchmo_cart', products=None, template="s
     else:
         form = forms.MultipleProductForm(products=products)
 
-    return render_to_response(template, context_instance=RequestContext(request, {'form' : form}))
+    return render(template, {'form' : form})
 
 def agree_terms(request):
     """Agree to terms"""

@@ -1,8 +1,7 @@
 from decimal import Decimal
 from django import http
 from django.contrib.messages import constants, get_messages
-from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import select_template
 from django.utils.translation import ugettext as _
 from l10n.utils import moneyfmt
@@ -50,7 +49,7 @@ def category_index(request, template="product/category_index.html", root_only=Tr
     ctx = {
         'categorylist' : cats,
     }
-    return render_to_response(template, context_instance=RequestContext(request, ctx))
+    return render(request, template, ctx)
 
 def category_view(request, slug, parent_slugs='', template='product/category.html'):
     """Display the category, its child categories, and its products.
@@ -76,7 +75,7 @@ def category_view(request, slug, parent_slugs='', template='product/category.htm
         'products' : products,
     }
     index_prerender.send(Product, request=request, context=ctx, category=category, object_list=products)
-    return render_to_response(template, context_instance=RequestContext(request, ctx))
+    return render(request, template, ctx)
 
 
 def display_featured(num_to_display=None, random_display=None):
@@ -159,9 +158,8 @@ def get_product(request, product_slug=None, selected_options=(),
         default_view_tax=default_view_tax)
 
     template = find_product_template(product, producttypes=subtype_names)
-    context = RequestContext(request, extra_context)
 
-    response = http.HttpResponse(template.render(context))
+    response = http.HttpResponse(template.render(extra_context, request))
     try:
         from django.core.xheaders import populate_xheaders
         populate_xheaders(request, response, Product, product_id)
