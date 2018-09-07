@@ -88,7 +88,7 @@ class SSLRedirect:
                     secure = True
                     break
 
-        if (not secure == request_is_secure(request)) and not settings.DEBUG:
+        if secure and not request_is_secure(request) and not settings.DEBUG:
             raise RuntimeError('Redirect to https has been disabled in Satchmo '
                 'and show be configured on the server side, http requests now '
                 'fail here')
