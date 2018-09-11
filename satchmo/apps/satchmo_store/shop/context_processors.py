@@ -15,6 +15,12 @@ import logging
 log = logging.getLogger('shop_context')
 
 def settings(request):
+    # We only insert Satchmo context if we are in the shop subpages to
+    # avoid unnecessary db queries
+    url_name = request.resolver_match.url_name
+    if not url_name or 'satchmo' not in url_name:
+        return {}
+
     shop_config = Config.objects.get_current()
     cart = Cart.objects.from_request(request)
 
