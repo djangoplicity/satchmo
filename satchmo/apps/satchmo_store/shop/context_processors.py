@@ -5,7 +5,7 @@ http://www.b-list.org/weblog/2006/06/14/django-tips-template-context-processors
 It is used to add some common variables to all the templates
 """
 from django.conf import settings as site_settings
-from product.models import Category, Discount
+from product.models import Category
 from satchmo_store.shop import get_satchmo_setting
 from satchmo_store.shop.models import Config, Cart
 from satchmo_store.shop.signals import satchmo_context
