@@ -1238,8 +1238,7 @@ class ProductPriceLookupManager(models.Manager):
                 price=price,
                 quantity=qty,
                 discountable=product.is_discountable,
-                items_in_stock=product.items_in_stock,
-                productimage_set=product.productimage_set)
+                items_in_stock=product.items_in_stock)
             obj.save()
             objs.append(obj)
         return objs
