@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.template import loader, Context, TemplateDoesNotExist
+from django.template import loader, TemplateDoesNotExist
 from livesettings.functions import config_value
 from satchmo_store.shop.signals import rendering_store_mail, sending_store_mail
 
@@ -111,7 +111,7 @@ def send_store_mail(subject, context, template='', recipients_list=None,
         subject = subject % c_dict
 
     c_dict.update(context)
-    c = Context(c_dict)
+    c = c_dict
 
     recipients = recipients_list or []
 
