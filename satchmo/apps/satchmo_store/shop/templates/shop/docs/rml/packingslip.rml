@@ -19,11 +19,11 @@
 
 			<setFont name="Helvetica" size="16"/>
 			<drawCentredString x="11cm" y="182mm">{% trans "PACKING SLIP" %}</drawCentredString>
-            
+
             <setFont name="Helvetica" size="14"/>
 			<drawString x="7.5cm" y="24cm">{% trans "Billing Address" %}</drawString>
             <drawString x="13.5cm" y="24cm">{% trans "Shipping Address" %}</drawString>
-            
+
             <setFont name="Helvetica" size="12"/>
             <drawString x="1cm" y="235mm">{{shopDetails.street1}}</drawString>
             {% if shopDetails.street2 %}
@@ -37,10 +37,10 @@
             <drawString x="1cm" y="220mm">{{shopDetails.store_email}}</drawString>
             {% endif %}
             <rect x="13.5cm" y="26.2cm" width="5cm" height="1.3cm" fill="no" stroke="yes" round="5mm" />
-            
+
             <rect x="7.1cm" y="19.8cm" width="5cm" height="4cm" fill="no" stroke="yes" round="5mm" />
             <rect x="13.1cm" y="19.8cm" width="5cm" height="4cm" fill="no" stroke="yes" round="5mm" />
-            
+
 		</pageGraphics>
         <frame id="billaddress" x1="7cm" y1="18.9cm" width="5cm" height="5cm" />
 		<frame id="shipaddress" x1="13cm" y1="18.9cm" width="5cm" height="5cm"/>
@@ -93,16 +93,16 @@
         {% endif %}
 	<para>{{order.bill_city}}, {{order.bill_state}}</para>
 	<para>{{order.bill_postal_code}}</para>
-        {% ifnotequal order.bill_country shopDetails.country.iso2_code %}
+        {% if order.bill_country != shopDetails.country.iso2_code %}
         <para>{{order.bill_country_name}}</para>
         {% else %}
 	<spacer length="0.8cm" width="1mm"/>
-	{% endifnotequal %}
+	{% endif %}
 	<para>{% trans "Phone" %}: {{order.contact.primary_phone.phone}}</para>
 	<para>{% trans "Email" %}: {{order.contact.email}}</para>
 
 	<nextFrame/>
-    
+
     <para style="name">{{order.ship_addressee}}</para>
 	<para>{{order.ship_street1}}</para>
         {% if order.ship_street2 %}
@@ -110,13 +110,13 @@
         {% endif %}
 	<para>{{order.ship_city}}, {{order.ship_state}}</para>
 	<para>{{order.ship_postal_code}}</para>
-        {% ifnotequal order.ship_country shopDetails.country.iso2_code %}
+        {% if order.ship_country != shopDetails.country.iso2_code %}
         <para>{{ order.ship_country_name }}</para>
         {% else %}
 	<spacer length="0.8cm" width="1mm"/>
-        {% endifnotequal %}
+        {% endif %}
     <nextFrame/>
-    
+
 	<setNextTemplate name="others"/>
 	<spacer length="0.5cm" width="1mm"/>
 	<blockTable colWidths="14cm, 3.5cm" style="products">
