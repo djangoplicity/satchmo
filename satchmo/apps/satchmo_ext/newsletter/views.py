@@ -1,9 +1,8 @@
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _, ugettext
 from satchmo_ext.newsletter.forms import NewsletterForm
 
-def add_subscription(request, template="newsletter/subscribe_form.html", 
+def add_subscription(request, template="newsletter/subscribe_form.html",
     result_template="newsletter/update_results.html", form=NewsletterForm):
     """Add a subscription and return the results in the requested template."""
 
@@ -15,7 +14,7 @@ def remove_subscription(request, template="newsletter/unsubscribe_form.html",
 
     return _update(request, False, template, result_template, form=form)
 
-def update_subscription(request, template="newsletter/update_form.html", 
+def update_subscription(request, template="newsletter/update_form.html",
     result_template="newsletter/update_results.html", form=NewsletterForm):
     """Add a subscription and return the results in the requested template."""
 
@@ -42,12 +41,12 @@ def _update(request, state, template, result_template, form=NewsletterForm):
     else:
         workform = form()
 
-    ctx = RequestContext(request, {
+    ctx = {
         'result' : result,
         'form' : workform
-    })
+    }
 
     if success:
-        return render_to_response(result_template, context_instance=ctx)
+        return render(request, result_template, ctx)
     else:
-        return render_to_response(template, context_instance=ctx)
+        return render(request, template, ctx)

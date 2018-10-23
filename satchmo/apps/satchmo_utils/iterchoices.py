@@ -35,7 +35,7 @@ def iterchoices(func):
 
 def iterchoices_db(func):
     """
-    Iterator for lazy evaluation of choices for database models, modified 
+    Iterator for lazy evaluation of choices for database models, modified
     for functions which need database access to get results.
 
     It is similar to "iterchoices" with the following difference:
@@ -46,7 +46,7 @@ def iterchoices_db(func):
     (The state of database connection could be broken without this workaround for some db backends.)
     """
     # This test determines the conditions for which the call to enumerating
-    # function "func" is to be skipped. 
+    # function "func" is to be skipped.
     #
     # Typically it should be skipped for syncdb and all commands which can be
     # usually called before the first syncdb. It should be called for commands
@@ -78,7 +78,7 @@ def introspect_management_command():
     b) full name of external management command, e.g. 'south.management.commands.syncdb'
     c) string 'handler' in the case of running under handlers like uwsgi or mod_python.
     """
-    # Output of this function should be tested and have been tested with respect 
+    # Output of this function should be tested and have been tested with respect
     # to different commands and production server configurations including
     # all above-mentioned, with different installation methods
     # including compressed .egg,

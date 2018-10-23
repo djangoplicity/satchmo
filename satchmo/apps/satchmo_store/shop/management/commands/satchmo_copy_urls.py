@@ -1,8 +1,8 @@
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 import os
 import shutil
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Copy the satchmo urls file to the current project."
 
     def handle_noargs(self, **options):

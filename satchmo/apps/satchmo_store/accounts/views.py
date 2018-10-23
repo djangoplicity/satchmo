@@ -3,8 +3,7 @@ from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site, RequestSite
 from django.core import urlresolvers
 from django.http import HttpResponseRedirect, QueryDict
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic.base import TemplateView
@@ -50,11 +49,11 @@ def emaillogin(request, template_name='registration/login.html',
     else:
         current_site = RequestSite(request)
 
-    return render_to_response(template_name, {
+    return render(request, template_name, {
         'form': form,
         redirect_field_name: redirect_to,
         'site_name': current_site.name,
-    }, context_instance=RequestContext(request))
+    })
 emaillogin = never_cache(emaillogin)
 
 def _login(request, redirect_to, auth_form=EmailAuthenticationForm):
@@ -253,12 +252,11 @@ def activate(request, activation_key):
             # Treated for better compatibility with registation tests without error
             pass
 
-    context = RequestContext(request, {
+    context = {
         'account': account,
         'expiration_days': config_value('SHOP', 'ACCOUNT_ACTIVATION_DAYS'),
-    })
-    return render_to_response('registration/activate.html',
-                              context_instance=context)
+    }
+    return render(request, request, 'registration/activate.html', context)
 
 
 def login_signup(request,
@@ -289,12 +287,11 @@ def login_signup(request,
                 if redirect_to:
                     return HttpResponseRedirect(redirect_to)
                 else:
-                    ctx = RequestContext(request, {
+                    ctx = {
                         REDIRECT_FIELD_NAME: redirect_to,
-                    })
+                    }
 
-                    return render_to_response('registration/registration_complete.html',
-                                              context_instance=ctx)
+                    return render(request, 'registration/registration_complete.html', ctx)
             else:
                 createform = todo
 
@@ -340,9 +337,9 @@ def login_signup(request,
     if extra_context:
         ctx.update(extra_context)
 
-    context = RequestContext(request, ctx)
+    context = ctx
 
-    return render_to_response(template_name, context_instance=context)
+    return render(request, template_name, context)
 
 
 def login_signup_address(request, template_name="contact/login_signup_address.html"):
@@ -386,8 +383,8 @@ def register(request, redirect=None, template='registration/registration_form.ht
         if extra_context:
             ctx.update(extra_context)
 
-        context = RequestContext(request, ctx)
-        return render_to_response(template, context_instance=context)
+        context = ctx
+        return render(request, template, context)
 
 
 class RegistrationComplete(TemplateView):

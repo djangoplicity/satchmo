@@ -1,6 +1,5 @@
 from django.core.paginator import Paginator, InvalidPage
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from livesettings.functions import config_value
 from product.views import display_featured
@@ -31,12 +30,12 @@ def home(request, template="shop/index.html"):
     is_paged = paginator.num_pages > 1
     page = paginator.page(currpage)
 
-    ctx = RequestContext(request, {
+    ctx = {
         'all_products_list' : page.object_list,
         'is_paginated' : is_paged,
         'page_obj' : page,
         'paginator' : paginator
-    })
+    }
 
-    return render_to_response(template, context_instance=ctx)
+    return render(request, template, ctx)
 

@@ -1,6 +1,6 @@
 from decimal import Decimal
 from distutils.version import LooseVersion
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.core import urlresolvers
 from django.utils.importlib import import_module
 import django
@@ -19,7 +19,7 @@ logging.getLogger('satchmo_check').setLevel(logging.DEBUG)
 log = logging.getLogger('satchmo_check')
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Check the system to see if the Satchmo components are installed correctly."
 
     # These settings help to not import some dependencies before they are necessary.

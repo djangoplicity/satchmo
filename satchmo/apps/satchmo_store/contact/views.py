@@ -3,8 +3,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core import urlresolvers
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.forms.models import model_to_dict
 from django.utils.translation import ugettext
 from satchmo_store.contact import signals, CUSTOMER_ID
@@ -29,10 +28,9 @@ def view(request):
 
     signals.satchmo_contact_view.send(user_data, contact=user_data, contact_dict=contact_dict)
 
-    context = RequestContext(request, contact_dict)
 
-    return render_to_response('contact/view_profile.html',
-                              context_instance=context)
+    return render(request, 'contact/view_profile.html',
+                              contact_dict)
 
 view = login_required(view)
 
@@ -102,10 +100,9 @@ def update(request):
 
 
     init_data['next'] = request.REQUEST.get(REDIRECT_FIELD_NAME, '')
-    context = RequestContext(request, init_data)
 
-    return render_to_response('contact/update_form.html',
-                              context_instance=context)
+    return render(request, 'contact/update_form.html',
+                              init_data)
 
 update = login_required(update)
 
@@ -142,8 +139,8 @@ def address_create_edit(request, id=None):
         form = AddressBookForm(initial=initial_data)
     if initial_entry:
         editing = True
-    context = RequestContext(request, {'form':form, 'editing':editing, 'entry':initial_entry, 'next':next_url})    
-    return render_to_response('contact/address_form.html',context_instance=context)
+    context = {'form':form, 'editing':editing, 'entry':initial_entry, 'next':next_url}
+    return render(request, 'contact/address_form.html')
 address_create_edit = login_required(address_create_edit)
 
 def address_delete(request, id=None):
@@ -165,8 +162,8 @@ def address_delete(request, id=None):
         return http.HttpResponseRedirect(urlresolvers.reverse('satchmo_account_info'))
     else:
         form = YesNoForm()
-    context = RequestContext(request, {'form':form,'entry':initial_entry})    
-    return render_to_response('contact/address_form_delete.html',context_instance=context)
+    context = {'form':form,'entry':initial_entry}
+    return render(request, 'contact/address_form_delete.html')
 address_delete = login_required(address_delete)
 
 
@@ -195,11 +192,11 @@ def ajax_get_state(request, **kwargs):
 
         areas = area_choices_for_country(country_obj, ugettext)
 
-        context = RequestContext(request, {
+        context = {
             'areas': areas,
-        })
-        return render_to_response('contact/_state_choices.html',
-                                  context_instance=context)
+        }
+        return render(request, 'contact/_state_choices.html',
+                                  context)
     except AjaxGetStateException, e:
         log.error("ajax_get_state aborting: %s" % e.message)
 

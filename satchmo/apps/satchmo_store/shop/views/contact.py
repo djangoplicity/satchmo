@@ -1,8 +1,7 @@
 from django import forms
 from django import http
 from django.core import urlresolvers
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from satchmo_store.mail import send_store_mail
 from satchmo_store.shop.signals import contact_sender
@@ -46,5 +45,4 @@ def form(request):
             initialData['name'] = request.user.first_name + " " + request.user.last_name
         form = ContactForm(initial=initialData)
 
-    return render_to_response('shop/contact_form.html', {'form': form},
-                              context_instance=RequestContext(request))
+    return render(request, 'shop/contact_form.html', {'form': form})

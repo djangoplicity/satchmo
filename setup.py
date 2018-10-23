@@ -50,9 +50,9 @@ setup(
 		'sorl-thumbnail',
 		'django-registration==2.2',
 		'django-livesettings',
-		'django-threaded-multihost == 1.3-2',
-		'django-caching-app-plugins == 0.1.5-eso2',
-		'django-keyedcache == 1.5.2',
+		'django-threaded-multihost',
+		'django-caching-app-plugins == 0.1.6',
+		'django-keyedcache',
 	],
 	packages=packages,
 	classifiers=[

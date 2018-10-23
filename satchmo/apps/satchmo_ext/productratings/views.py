@@ -1,5 +1,4 @@
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from livesettings.functions import config_value
 from satchmo_ext.productratings.queries import highest_rated
 
@@ -8,7 +7,7 @@ def display_bestratings(request, count=0, template='product/best_ratings.html'):
     if count is None:
         count = config_value('PRODUCT','NUM_DISPLAY')
 
-    ctx = RequestContext(request, {
+    ctx = {
         'products' : highest_rated(),
-    })
-    return render_to_response(template, context_instance=ctx)
+    }
+    return render(request, template, ctx)
