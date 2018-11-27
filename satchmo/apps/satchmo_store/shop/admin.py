@@ -86,6 +86,10 @@ class OrderOptions(AutocompleteAdmin):
         OrderPaymentDetail_Inline, OrderPaymentFailureDetail_Inline]
     readonly_fields = ('status', 'contact')
 
+    def get_queryset(self, request):
+        qs = super(OrderOptions, self).get_queryset(request)
+        return qs.prefetch_related('payments')
+
 class OrderItemOptions(admin.ModelAdmin):
     inlines = [OrderItemDetail_Inline]
 
