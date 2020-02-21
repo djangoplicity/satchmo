@@ -25,10 +25,29 @@
 
 {%- block footer %}
 {{ super() }}
-<script src='http://www.google-analytics.com/ga.js' type='text/javascript'></script>
+<!-- Matomo -->
 <script type="text/javascript">
-var pageTracker = _gat._getTracker("UA-1711397-1");
-pageTracker._initData();
-pageTracker._trackPageview();
+  var _paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="/mtmo/";
+    var u2="/mtmotest/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    _paq.push(['addTracker', u2+'matomo.php', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
 </script>
+<!-- End Matomo Code -->
+<!-- Google Analytics -->
+<script>
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-1965004-1', 'auto');
+	ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+<!-- End Google Analytics -->
 {%- endblock %}
